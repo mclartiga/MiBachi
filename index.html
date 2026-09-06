@@ -1,0 +1,5127 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BachiTrack - Gestor Académico de Bachillerato</title>
+  <style>
+/* ==========================================================================
+   BachiTrack - Sistema de Estilos y Diseño
+   Diseño moderno, accesible y adaptable con temas Claro/Oscuro
+   ========================================================================== */
+
+:root {
+  /* Paleta en Modo Oscuro (Por defecto) */
+  --bg-main: #0b0f19;
+  --bg-sidebar: #111827;
+  --bg-card: #1f293d;
+  --bg-card-hover: #26334d;
+  --bg-card-muted: #162032;
+  --bg-input: #151d2d;
+  
+  --text-primary: #f9fafb;
+  --text-secondary: #9ca3af;
+  --text-muted: #6b7280;
+  
+  --border-color: #2e3a52;
+  --border-subtle: #1e293b;
+  
+  --primary: #3b82f6;
+  --primary-hover: #2563eb;
+  --primary-light: rgba(59, 130, 246, 0.15);
+  
+  --success: #10b981;
+  --success-bg: rgba(16, 185, 129, 0.15);
+  --warning: #f59e0b;
+  --warning-bg: rgba(245, 158, 11, 0.15);
+  --danger: #ef4444;
+  --danger-bg: rgba(239, 68, 68, 0.15);
+  --info: #06b6d4;
+  
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.25);
+  --shadow-glow: 0 0 20px rgba(59, 130, 246, 0.25);
+  
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+  
+  --sidebar-width: 260px;
+  --header-height: 70px;
+  --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-theme="light"] {
+  --bg-main: #f8fafc;
+  --bg-sidebar: #ffffff;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f1f5f9;
+  --bg-card-muted: #f8fafc;
+  --bg-input: #ffffff;
+  
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+  
+  --border-color: #e2e8f0;
+  --border-subtle: #edf2f7;
+  
+  --primary-light: rgba(59, 130, 246, 0.1);
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 10px 20px -3px rgba(0, 0, 0, 0.1);
+  --shadow-glow: 0 0 20px rgba(59, 130, 246, 0.15);
+}
+
+/* Reset y tipografía */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background-color: var(--bg-main);
+  color: var(--text-primary);
+  min-height: 100vh;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  display: flex;
+  overflow-x: hidden;
+}
+
+/* Scrollbar personalizada */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-main);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: var(--radius-full);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* ==========================================================================
+   Estructura Principal (Sidebar + Main)
+   ========================================================================== */
+
+.app-container {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Sidebar */
+.sidebar {
+  width: var(--sidebar-width);
+  background-color: var(--bg-sidebar);
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  z-index: 40;
+  transition: transform 0.3s ease;
+}
+
+.brand-header {
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.brand-logo {
+  width: 38px;
+  height: 38px;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  color: white;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+.brand-info h1 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+}
+
+.brand-info span {
+  font-size: 0.75rem;
+  color: var(--primary);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Perfil de estudiante en Sidebar */
+.student-profile {
+  padding: 16px 20px;
+  margin: 12px 14px;
+  background: var(--bg-card-muted);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.student-avatar {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, #10b981, #06b6d4);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.student-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.student-details h4 {
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.student-details p {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+/* Navegación */
+.sidebar-nav {
+  flex: 1;
+  padding: 12px 14px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: var(--transition);
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.nav-item:hover {
+  background-color: var(--bg-card-hover);
+  color: var(--text-primary);
+}
+
+.nav-item.active {
+  background-color: var(--primary-light);
+  color: var(--primary);
+  border-color: rgba(59, 130, 246, 0.3);
+  font-weight: 600;
+}
+
+.nav-icon {
+  font-size: 1.15rem;
+  width: 22px;
+  display: inline-flex;
+  justify-content: center;
+}
+
+.nav-badge {
+  margin-left: auto;
+  padding: 2px 7px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  border-radius: var(--radius-full);
+  background: var(--primary);
+  color: white;
+}
+
+.nav-badge.danger {
+  background: var(--danger);
+}
+
+/* Footer Sidebar */
+.sidebar-footer {
+  padding: 14px;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.theme-toggle-btn, .settings-btn {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: var(--transition);
+}
+
+.theme-toggle-btn:hover, .settings-btn:hover {
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+}
+
+/* Contenido Principal */
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  background-color: var(--bg-main);
+}
+
+/* Header Superior */
+.top-header {
+  height: var(--header-height);
+  background-color: var(--bg-sidebar);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  flex-shrink: 0;
+}
+
+.mobile-menu-btn {
+  display: none;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-size: 1.4rem;
+  cursor: pointer;
+  margin-right: 12px;
+}
+
+.header-title-container h2 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.header-title-container p {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  border: 1px solid transparent;
+  text-decoration: none;
+  font-family: inherit;
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  color: white;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.35);
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background-color: var(--bg-card);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+.btn-secondary:hover {
+  background-color: var(--bg-card-hover);
+  border-color: var(--text-muted);
+}
+
+.btn-danger {
+  background-color: var(--danger-bg);
+  color: var(--danger);
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.btn-danger:hover {
+  background-color: var(--danger);
+  color: white;
+}
+
+.btn-sm {
+  padding: 5px 10px;
+  font-size: 0.8rem;
+}
+
+/* Área de vistas con scroll */
+.views-viewport {
+  flex: 1;
+  overflow-y: auto;
+  padding: 28px 32px 48px;
+}
+
+.view-section {
+  display: none;
+  animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.view-section.active-view {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==========================================================================
+   VISTA: DASHBOARD
+   ========================================================================== */
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  margin-bottom: 28px;
+}
+
+.metric-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+}
+
+.metric-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: rgba(59, 130, 246, 0.4);
+}
+
+.metric-icon-wrap {
+  width: 50px;
+  height: 50px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+
+.icon-blue { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
+.icon-amber { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+.icon-red { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+.icon-emerald { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+
+.metric-data h3 {
+  font-size: 1.7rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.metric-data p {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  margin-top: 4px;
+}
+
+/* Cuadrícula de 2 columnas para el Dashboard */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 24px;
+}
+
+.dashboard-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 22px;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 24px;
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.panel-header h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.panel-action-link {
+  font-size: 0.82rem;
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.panel-action-link:hover {
+  text-decoration: underline;
+}
+
+/* Indicador de Clase Actual */
+.current-class-card {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.12), rgba(139, 92, 246, 0.15));
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.current-class-info h4 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.current-class-info p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+.live-badge {
+  background: #10b981;
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.live-dot {
+  width: 6px;
+  height: 6px;
+  background: white;
+  border-radius: 50%;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(1.3); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* Lista de Clases de Hoy */
+.today-schedule-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.schedule-row-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background: var(--bg-card-muted);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  border-left: 4px solid var(--primary);
+  transition: var(--transition);
+}
+
+.schedule-row-item:hover {
+  background: var(--bg-card-hover);
+}
+
+.schedule-row-item.is-past {
+  opacity: 0.55;
+  filter: grayscale(0.2);
+}
+
+.schedule-row-item.is-current {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  box-shadow: 0 0 12px rgba(59, 130, 246, 0.2);
+}
+
+.time-badge {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.class-details {
+  flex: 1;
+  margin: 0 16px;
+}
+
+.class-title {
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.class-room {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+/* ==========================================================================
+   VISTA: HORARIO SEMANAL
+   ========================================================================== */
+
+.timetable-container {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  overflow-x: auto;
+  box-shadow: var(--shadow-sm);
+}
+
+.timetable-grid {
+  display: grid;
+  grid-template-columns: 80px repeat(5, minmax(160px, 1fr));
+  min-width: 880px;
+}
+
+.timetable-header-cell {
+  padding: 16px 12px;
+  text-align: center;
+  background: var(--bg-card-muted);
+  border-bottom: 1px solid var(--border-color);
+  border-right: 1px solid var(--border-color);
+  font-weight: 700;
+  font-size: 0.88rem;
+}
+
+.timetable-header-cell.is-today {
+  color: var(--primary);
+  background: var(--primary-light);
+}
+
+.time-column-cell {
+  padding: 12px 8px;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border-color);
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.timetable-slot-cell {
+  padding: 8px;
+  min-height: 85px;
+  border-bottom: 1px solid var(--border-color);
+  border-right: 1px solid var(--border-color);
+  background: var(--bg-card);
+  position: relative;
+  transition: var(--transition);
+}
+
+.timetable-slot-cell:hover {
+  background: var(--bg-card-hover);
+}
+
+.timetable-slot-cell.is-recreo {
+  background: rgba(245, 158, 11, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--warning);
+  font-weight: 700;
+  font-size: 0.82rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.slot-card {
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  color: white;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.slot-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
+}
+
+.slot-subject-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.slot-meta {
+  font-size: 0.72rem;
+  opacity: 0.9;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+}
+
+/* ==========================================================================
+   VISTA: TAREAS Y ENTREGAS
+   ========================================================================== */
+
+.filter-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.filter-select, .search-input {
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  outline: none;
+  font-family: inherit;
+}
+
+.filter-select:focus, .search-input:focus {
+  border-color: var(--primary);
+}
+
+.view-tabs {
+  display: flex;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 2px;
+}
+
+.view-tab-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: var(--transition);
+}
+
+.view-tab-btn.active {
+  background: var(--primary);
+  color: white;
+}
+
+/* Kanban Board para tareas */
+.kanban-board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.kanban-col {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  min-height: 480px;
+}
+
+.kanban-col-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.kanban-col-header h4 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.count-badge {
+  background: var(--bg-card-muted);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.kanban-cards-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+}
+
+/* Tarjeta de Tarea */
+.task-card {
+  background: var(--bg-card-muted);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  transition: var(--transition);
+  position: relative;
+  cursor: grab;
+}
+
+.task-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--text-muted);
+}
+
+.task-card.is-completed {
+  opacity: 0.65;
+}
+
+.task-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.task-subject-tag {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  color: white;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.task-priority-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  text-transform: uppercase;
+}
+
+.priority-alta { background: var(--danger-bg); color: var(--danger); border: 1px solid rgba(239,68,68,0.3); }
+.priority-media { background: var(--warning-bg); color: var(--warning); border: 1px solid rgba(245,158,11,0.3); }
+.priority-baja { background: var(--primary-light); color: var(--primary); border: 1px solid rgba(59,130,246,0.3); }
+
+.task-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+  line-height: 1.35;
+}
+
+.task-card.is-completed .task-title {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+.task-desc {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.task-subtasks-preview {
+  margin-bottom: 10px;
+}
+
+.subtask-progress-bar {
+  height: 4px;
+  background: var(--border-color);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+
+.subtask-progress-fill {
+  height: 100%;
+  background: var(--success);
+  transition: width 0.3s ease;
+}
+
+.subtask-progress-text {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.task-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-color);
+  font-size: 0.75rem;
+}
+
+.due-countdown {
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.due-countdown.is-overdue {
+  color: var(--danger);
+}
+
+.due-countdown.is-today {
+  color: var(--warning);
+}
+
+.due-countdown.is-upcoming {
+  color: var(--text-secondary);
+}
+
+.task-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.icon-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: var(--radius-sm);
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-btn:hover {
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+}
+
+/* ==========================================================================
+   VISTA: EXÁMENES Y EVALUACIONES
+   ========================================================================== */
+
+.exams-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.exams-summary-strip {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.exam-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 20px;
+}
+
+.exam-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+}
+
+.exam-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: rgba(59, 130, 246, 0.4);
+}
+
+.exam-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.exam-countdown-pill {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+}
+
+.exam-countdown-pill.urgent {
+  background: var(--danger-bg);
+  color: var(--danger);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.exam-countdown-pill.soon {
+  background: var(--warning-bg);
+  color: var(--warning);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.exam-countdown-pill.passed {
+  background: var(--bg-card-muted);
+  color: var(--text-muted);
+}
+
+.exam-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.exam-topics {
+  background: var(--bg-card-muted);
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+  border-left: 3px solid var(--primary);
+}
+
+.exam-grade-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-input);
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  margin-bottom: 14px;
+}
+
+.grade-display {
+  font-size: 1.25rem;
+  font-weight: 800;
+}
+
+.grade-display.grade-high { color: #10b981; }
+.grade-display.grade-pass { color: #3b82f6; }
+.grade-display.grade-fail { color: #ef4444; }
+
+/* ==========================================================================
+   VISTA: APUNTES (CUADERNO DIGITAL)
+   ========================================================================== */
+
+.notes-layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 20px;
+  height: calc(100vh - var(--header-height) - 76px);
+  min-height: 600px;
+}
+
+.notes-sidebar-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.notes-filter-box {
+  padding: 16px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.notes-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.note-item-card {
+  padding: 12px 14px;
+  background: var(--bg-card-muted);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.note-item-card:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--text-muted);
+}
+
+.note-item-card.active-note {
+  border-color: var(--primary);
+  background: var(--primary-light);
+}
+
+.note-item-title {
+  font-size: 0.92rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.note-item-meta {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Visor / Editor de Apuntes */
+.note-viewer-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.note-viewer-header {
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.note-header-info h2 {
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.note-tags-container {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+
+.note-tag {
+  background: var(--bg-card-muted);
+  border: 1px solid var(--border-color);
+  font-size: 0.72rem;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  color: var(--text-secondary);
+}
+
+.note-editor-toolbar {
+  padding: 8px 16px;
+  background: var(--bg-card-muted);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.toolbar-btn {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 5px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.toolbar-btn:hover {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.note-rendered-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 28px;
+  line-height: 1.7;
+}
+
+.note-rendered-content h1 { font-size: 1.6rem; margin-bottom: 14px; }
+.note-rendered-content h2 { font-size: 1.3rem; margin: 20px 0 10px; color: var(--text-primary); }
+.note-rendered-content h3 { font-size: 1.1rem; margin: 16px 0 8px; color: var(--primary); }
+.note-rendered-content p { margin-bottom: 14px; color: var(--text-secondary); }
+.note-rendered-content ul, .note-rendered-content ol { margin: 0 0 16px 24px; color: var(--text-secondary); }
+.note-rendered-content li { margin-bottom: 4px; }
+
+/* Bloques de estudio especiales */
+.study-callout {
+  border-left: 4px solid var(--primary);
+  background: var(--bg-card-muted);
+  padding: 14px 18px;
+  margin: 20px 0;
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  box-shadow: var(--shadow-sm);
+}
+
+.study-callout-def {
+  border-left-color: #f59e0b;
+  background: rgba(245, 158, 11, 0.08);
+}
+
+.study-callout-formula {
+  border-left-color: #3b82f6;
+  background: rgba(59, 130, 246, 0.08);
+}
+
+.study-callout-alert {
+  border-left-color: #ef4444;
+  background: rgba(239, 68, 68, 0.08);
+}
+
+.study-callout-example {
+  border-left-color: #10b981;
+  background: rgba(16, 185, 129, 0.08);
+}
+
+.callout-header {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.callout-body {
+  font-size: 0.92rem;
+  color: var(--text-primary);
+}
+
+.math-inline, .code-inline {
+  background: var(--bg-card-muted);
+  border: 1px solid var(--border-color);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: "SFMono-Regular", Consolas, Menlo, monospace;
+  font-size: 0.9em;
+  color: #38bdf8;
+}
+
+.note-divider {
+  border: 0;
+  border-top: 1px solid var(--border-color);
+  margin: 24px 0;
+}
+
+/* ==========================================================================
+   VISTA: CALCULADORA DE NOTA DE BACHILLERATO Y EBAU / PAU
+   ========================================================================== */
+
+.pau-calculator-container {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 24px;
+}
+
+.pau-form-panel, .pau-result-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+}
+
+.pau-section-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pau-inputs-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.form-input {
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  outline: none;
+  font-family: inherit;
+}
+
+.form-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+/* Panel de Resultados EBAU */
+.pau-score-hero {
+  background: linear-gradient(135deg, #1e3a8a, #4338ca);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  color: white;
+  text-align: center;
+  margin-bottom: 24px;
+  box-shadow: 0 8px 24px rgba(30, 58, 138, 0.4);
+}
+
+.pau-score-hero h4 {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.85;
+}
+
+.pau-grand-total {
+  font-size: 3.4rem;
+  font-weight: 900;
+  line-height: 1;
+  margin: 10px 0;
+  letter-spacing: -0.03em;
+}
+
+.pau-score-hero p {
+  font-size: 0.85rem;
+  opacity: 0.9;
+}
+
+.breakdown-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 0.88rem;
+}
+
+.breakdown-row:last-child {
+  border-bottom: none;
+}
+
+.breakdown-label {
+  color: var(--text-secondary);
+}
+
+.breakdown-val {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* ==========================================================================
+   VISTA: ASIGNATURAS
+   ========================================================================== */
+
+.subjects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.subject-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.subject-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: var(--subject-accent-color, var(--primary));
+}
+
+.subject-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: rgba(59, 130, 246, 0.4);
+}
+
+.subject-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.subject-icon-box {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  background: var(--bg-card-muted);
+}
+
+.subject-title-info h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.subject-code-pill {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.subject-meta-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  margin-bottom: 18px;
+}
+
+.subject-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ==========================================================================
+   MODALES
+   ========================================================================== */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 20px;
+}
+
+.modal-overlay.active {
+  display: flex;
+  animation: fadeIn 0.2s ease;
+}
+
+.modal-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 580px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-lg);
+}
+
+.modal-header {
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-header h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.modal-close-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.4rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  line-height: 1;
+}
+
+.modal-close-btn:hover {
+  color: var(--text-primary);
+}
+
+.modal-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.modal-footer {
+  padding: 16px 24px;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+/* Color picker pills */
+.color-picker-group {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.color-choice {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: var(--transition);
+}
+
+.color-choice.selected {
+  border-color: white;
+  transform: scale(1.15);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
+}
+
+/* Icon picker pills */
+.icon-picker-group {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.icon-choice {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-md);
+  background: var(--bg-card-muted);
+  border: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 18px;
+  transition: var(--transition);
+}
+
+.icon-choice.selected {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  transform: scale(1.1);
+}
+
+/* Subtasks dynamic list */
+.subtasks-editor-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.subtask-edit-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Toasts de Notificación */
+.toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.toast {
+  pointer-events: auto;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-left: 4px solid var(--primary);
+  box-shadow: var(--shadow-lg);
+  padding: 12px 18px;
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: 0.88rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: slideIn 0.3s ease;
+}
+
+.toast.toast-success { border-left-color: var(--success); }
+.toast.toast-error { border-left-color: var(--danger); }
+
+@keyframes slideIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* ==========================================================================
+   RESPONSIVIDAD
+   ========================================================================== */
+
+@media (max-width: 1024px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+  .pau-calculator-container {
+    grid-template-columns: 1fr;
+  }
+  .notes-layout {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .mobile-menu-btn {
+    display: block;
+  }
+  .sidebar {
+    position: fixed;
+    left: -100%;
+    top: 0;
+    bottom: 0;
+  }
+  .sidebar.mobile-open {
+    left: 0;
+    transform: translateX(0);
+    box-shadow: 0 0 50px rgba(0,0,0,0.5);
+  }
+  .top-header {
+    padding: 0 16px;
+  }
+  .views-viewport {
+    padding: 16px;
+  }
+  .kanban-board {
+    grid-template-columns: 1fr;
+  }
+  .pau-inputs-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+</style>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
+</head>
+<body>
+  <div class="app-container">
+    <!-- BARRA LATERAL (SIDEBAR) -->
+    <aside class="sidebar" id="appSidebar">
+      <div class="brand-header">
+        <div class="brand-logo">🎓</div>
+        <div class="brand-info">
+          <h1>BachiTrack</h1>
+          <span>Bachillerato</span>
+        </div>
+      </div>
+
+      <!-- Tarjeta de estudiante -->
+      <div class="student-profile">
+        <div class="student-avatar" id="studentAvatar">BT</div>
+        <div class="student-details">
+          <h4 id="sidebarStudentName">Mi Bachillerato</h4>
+          <p id="sidebarStudentCourse">2º Bachillerato &bull; Ciencias</p>
+        </div>
+      </div>
+
+      <!-- Menú de Navegación -->
+      <nav class="sidebar-nav">
+        <a class="nav-item active" data-view="dashboard" id="nav-dashboard">
+          <span class="nav-icon">📊</span>
+          <span>Dashboard</span>
+        </a>
+        <a class="nav-item" data-view="schedule" id="nav-schedule">
+          <span class="nav-icon">📅</span>
+          <span>Horario</span>
+        </a>
+        <a class="nav-item" data-view="tasks" id="nav-tasks">
+          <span class="nav-icon">✅</span>
+          <span>Tareas</span>
+          <span class="nav-badge" id="tasksNavBadge">0</span>
+        </a>
+        <a class="nav-item" data-view="exams" id="nav-exams">
+          <span class="nav-icon">📝</span>
+          <span>Exámenes</span>
+          <span class="nav-badge danger" id="examsNavBadge">0</span>
+        </a>
+        <a class="nav-item" data-view="notes" id="nav-notes">
+          <span class="nav-icon">📚</span>
+          <span>Apuntes</span>
+        </a>
+        <a class="nav-item" data-view="subjects" id="nav-subjects">
+          <span class="nav-icon">🏷️</span>
+          <span>Asignaturas</span>
+        </a>
+        <a class="nav-item" data-view="pau" id="nav-pau">
+          <span class="nav-icon">🎯</span>
+          <span>Calculadora EBAU</span>
+        </a>
+      </nav>
+
+      <!-- Footer Sidebar -->
+      <div class="sidebar-footer">
+        <button class="theme-toggle-btn" id="themeToggleBtn" title="Cambiar tema claro/oscuro">
+          <span id="themeIcon">🌙</span>
+          <span id="themeText">Oscuro</span>
+        </button>
+        <button class="settings-btn" id="openSettingsBtn" title="Configuración y Copias de Seguridad">
+          ⚙️ Ajustes
+        </button>
+      </div>
+    </aside>
+
+    <!-- ÁREA PRINCIPAL -->
+    <main class="main-content">
+      <!-- HEADER SUPERIOR -->
+      <header class="top-header">
+        <div style="display: flex; align-items: center;">
+          <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Abrir menú">☰</button>
+          <div class="header-title-container">
+            <h2 id="currentViewTitle">Dashboard</h2>
+            <p id="currentViewSubtitle">Resumen de clases, tareas y exámenes</p>
+          </div>
+        </div>
+
+        <div class="header-actions">
+          <button class="btn btn-secondary btn-sm" id="quickNewTaskBtn">+ Tarea</button>
+          <button class="btn btn-secondary btn-sm" id="quickNewExamBtn">+ Examen</button>
+          <button class="btn btn-primary btn-sm" id="quickNewNoteBtn">+ Apunte</button>
+        </div>
+      </header>
+
+      <!-- CONTENEDOR DE VISTAS CON SCROLL -->
+      <div class="views-viewport">
+
+        <!-- ==================== VISTA 1: DASHBOARD ==================== -->
+        <section class="view-section active-view" id="view-dashboard">
+          <!-- Métricas Destacadas -->
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <div class="metric-icon-wrap icon-blue">📊</div>
+              <div class="metric-data">
+                <h3 id="metricAverageGrade">-</h3>
+                <p>Media Bachillerato</p>
+              </div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-icon-wrap icon-amber">⏳</div>
+              <div class="metric-data">
+                <h3 id="metricPendingTasks">0</h3>
+                <p>Tareas Pendientes</p>
+              </div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-icon-wrap icon-red">📝</div>
+              <div class="metric-data">
+                <h3 id="metricUpcomingExams">0</h3>
+                <p>Exámenes Próximos</p>
+              </div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-icon-wrap icon-emerald">📚</div>
+              <div class="metric-data">
+                <h3 id="metricTotalSubjects">0</h3>
+                <p>Asignaturas Activas</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cuadrícula 2 Columnas -->
+          <div class="dashboard-grid">
+            <!-- Columna Izquierda: Clase Actual + Horario de Hoy -->
+            <div>
+              <!-- Indicador Clase en Curso -->
+              <div class="current-class-card" id="currentClassCard">
+                <div class="current-class-info">
+                  <span class="live-badge"><span class="live-dot"></span> HORARIO EN TIEMPO REAL</span>
+                  <h4 id="currentClassTitle" style="margin-top: 6px;">Cargando horario...</h4>
+                  <p id="currentClassDetails">Calculando periodo lectivo actual</p>
+                </div>
+                <div id="currentClassIcon" style="font-size: 32px;">🏫</div>
+              </div>
+
+              <!-- Panel Horario de Hoy -->
+              <div class="dashboard-panel">
+                <div class="panel-header">
+                  <h3>📅 Clases de Hoy (<span id="dashboardTodayDayName">Hoy</span>)</h3>
+                  <a class="panel-action-link" id="linkToFullSchedule">Ver semana completa &rarr;</a>
+                </div>
+                <div class="today-schedule-list" id="dashboardTodayList">
+                  <!-- Renderizado dinámico de clases de hoy -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Columna Derecha: Tareas Urgentes + Exámenes -->
+            <div>
+              <!-- Panel Tareas Inminentes -->
+              <div class="dashboard-panel">
+                <div class="panel-header">
+                  <h3>⏳ Próximas Entregas</h3>
+                  <a class="panel-action-link" id="linkToTasks">Ver todas &rarr;</a>
+                </div>
+                <div class="today-schedule-list" id="dashboardUpcomingTasksList">
+                  <!-- Renderizado dinámico de tareas -->
+                </div>
+              </div>
+
+              <!-- Panel Próximos Exámenes -->
+              <div class="dashboard-panel">
+                <div class="panel-header">
+                  <h3>🎯 Calendario de Exámenes</h3>
+                  <a class="panel-action-link" id="linkToExams">Ver todos &rarr;</a>
+                </div>
+                <div class="today-schedule-list" id="dashboardUpcomingExamsList">
+                  <!-- Renderizado dinámico de exámenes -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== VISTA 2: HORARIO SEMANAL ==================== -->
+        <section class="view-section" id="view-schedule">
+          <div class="filter-bar">
+            <div class="filter-group">
+              <span style="font-size: 0.88rem; color: var(--text-secondary);">
+                💡 Haz clic en cualquier franja o asignatura para editarla, o añade una nueva clase.
+              </span>
+            </div>
+            <button class="btn btn-primary btn-sm" id="addNewSlotBtn">+ Añadir Clase</button>
+          </div>
+
+          <div class="timetable-container">
+            <div class="timetable-grid" id="weeklyTimetableGrid">
+              <!-- Cuadrícula generada dinámicamente -->
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== VISTA 3: TAREAS ==================== -->
+        <section class="view-section" id="view-tasks">
+          <!-- Filtros y control de vista -->
+          <div class="filter-bar">
+            <div class="filter-group">
+              <input type="text" class="search-input" id="tasksSearchInput" placeholder="🔍 Buscar tarea...">
+              <select class="filter-select" id="tasksSubjectFilter">
+                <option value="all">Todas las asignaturas</option>
+              </select>
+              <select class="filter-select" id="tasksPriorityFilter">
+                <option value="all">Todas las prioridades</option>
+                <option value="alta">Alta</option>
+                <option value="media">Media</option>
+                <option value="baja">Baja</option>
+              </select>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div class="view-tabs">
+                <button class="view-tab-btn active" id="tasksViewKanbanBtn">Tablero</button>
+                <button class="view-tab-btn" id="tasksViewListBtn">Lista</button>
+              </div>
+              <button class="btn btn-primary btn-sm" id="addNewTaskBtn">+ Nueva Tarea</button>
+            </div>
+          </div>
+
+          <!-- Vista Tablero Kanban -->
+          <div class="kanban-board" id="tasksKanbanContainer">
+            <!-- Columna: Pendiente -->
+            <div class="kanban-col">
+              <div class="kanban-col-header">
+                <h4>⏳ Pendientes</h4>
+                <span class="count-badge" id="countPending">0</span>
+              </div>
+              <div class="kanban-cards-container" id="colPendingCards"></div>
+            </div>
+
+            <!-- Columna: En Progreso -->
+            <div class="kanban-col">
+              <div class="kanban-col-header">
+                <h4>🚀 En Progreso</h4>
+                <span class="count-badge" id="countInProgress">0</span>
+              </div>
+              <div class="kanban-cards-container" id="colInProgressCards"></div>
+            </div>
+
+            <!-- Columna: Completada -->
+            <div class="kanban-col">
+              <div class="kanban-col-header">
+                <h4>✅ Completadas</h4>
+                <span class="count-badge" id="countCompleted">0</span>
+              </div>
+              <div class="kanban-cards-container" id="colCompletedCards"></div>
+            </div>
+          </div>
+
+          <!-- Vista Lista Alternativa -->
+          <div class="today-schedule-list" id="tasksListContainer" style="display: none;"></div>
+        </section>
+
+        <!-- ==================== VISTA 4: EXÁMENES ==================== -->
+        <section class="view-section" id="view-exams">
+          <div class="filter-bar">
+            <div class="filter-group">
+              <select class="filter-select" id="examsSubjectFilter">
+                <option value="all">Todas las asignaturas</option>
+              </select>
+              <select class="filter-select" id="examsStatusFilter">
+                <option value="all">Todos los exámenes</option>
+                <option value="upcoming">Próximos</option>
+                <option value="graded">Calificados con nota</option>
+                <option value="ungraded">Pendientes de calificar</option>
+              </select>
+            </div>
+            <button class="btn btn-primary btn-sm" id="addNewExamBtn">+ Nuevo Examen</button>
+          </div>
+
+          <!-- Resumen de medias por asignatura -->
+          <div class="exams-summary-strip" id="examsAveragesStrip">
+            <!-- Renderizado dinámico de tarjetas de media -->
+          </div>
+
+          <h3 style="margin: 24px 0 16px; font-size: 1.1rem;">Calendario y Registro de Exámenes</h3>
+          <div class="exam-cards-grid" id="examsGridContainer">
+            <!-- Renderizado dinámico de exámenes -->
+          </div>
+        </section>
+
+        <!-- ==================== VISTA 5: APUNTES ==================== -->
+        <section class="view-section" id="view-notes">
+          <div class="notes-layout">
+            <!-- Panel Izquierdo: Lista y Búsqueda -->
+            <div class="notes-sidebar-panel">
+              <div class="notes-filter-box">
+                <div style="display: flex; gap: 8px;">
+                  <input type="text" class="search-input" id="notesSearchInput" placeholder="🔍 Buscar en apuntes..." style="flex: 1;">
+                  <button class="btn btn-primary btn-sm" id="addNewNoteBtn" title="Nuevo apunte">+</button>
+                </div>
+                <select class="filter-select" id="notesSubjectFilter">
+                  <option value="all">Todas las asignaturas</option>
+                </select>
+              </div>
+              <div class="notes-list" id="notesListContainer">
+                <!-- Lista de apuntes renderizada dinámicamente -->
+              </div>
+            </div>
+
+            <!-- Panel Derecho: Visor / Editor -->
+            <div class="note-viewer-panel">
+              <!-- Barra superior de la nota -->
+              <div class="note-viewer-header" id="noteViewerHeader">
+                <div class="note-header-info">
+                  <span class="task-subject-tag" id="noteSubjectBadge">Asignatura</span>
+                  <h2 id="noteViewerTitle">Selecciona un apunte</h2>
+                  <div class="note-tags-container" id="noteViewerTags"></div>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                  <button class="btn btn-secondary btn-sm" id="printNoteBtn" title="Imprimir o guardar como PDF">🖨️ Imprimir / PDF</button>
+                  <button class="btn btn-secondary btn-sm" id="exportNoteMdBtn" title="Descargar como Markdown">⬇️ .MD</button>
+                  <button class="btn btn-primary btn-sm" id="editCurrentNoteBtn">✏️ Editar</button>
+                  <button class="btn btn-danger btn-sm" id="deleteCurrentNoteBtn">🗑️</button>
+                </div>
+              </div>
+
+              <!-- Contenido renderizado -->
+              <div class="note-rendered-content" id="noteRenderedContent">
+                <p class="text-muted">Selecciona un apunte de la lista para leerlo o pulsa en "+" para crear uno nuevo.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== VISTA 6: ASIGNATURAS ==================== -->
+        <section class="view-section" id="view-subjects">
+          <div class="filter-bar">
+            <span style="font-size: 0.9rem; color: var(--text-secondary);">
+              Gestiona las asignaturas de tu curso, profesores, aulas, colores e iconos personalizados.
+            </span>
+            <button class="btn btn-primary btn-sm" id="addNewSubjectBtn">+ Nueva Asignatura</button>
+          </div>
+
+          <div class="subjects-grid" id="subjectsGridContainer">
+            <!-- Tarjetas de asignaturas renderizadas dinámicamente -->
+          </div>
+        </section>
+
+        <!-- ==================== VISTA 7: CALCULADORA EBAU / PAU ==================== -->
+        <section class="view-section" id="view-pau">
+          <div class="pau-calculator-container">
+            <!-- Formulario de Calificaciones -->
+            <div class="pau-form-panel">
+              <h3 class="pau-section-title">🎓 1. Calificaciones de Bachillerato (60%)</h3>
+              <div class="pau-inputs-grid">
+                <div class="form-group">
+                  <label for="pauGrade1Bach">Nota Media 1º Bachillerato (0 - 10)</label>
+                  <input type="number" id="pauGrade1Bach" class="form-input" min="0" max="10" step="0.01" value="8.40">
+                </div>
+                <div class="form-group">
+                  <label for="pauGrade2Bach">Nota Media 2º Bachillerato (0 - 10)</label>
+                  <input type="number" id="pauGrade2Bach" class="form-input" min="0" max="10" step="0.01" value="8.60">
+                </div>
+              </div>
+
+              <h3 class="pau-section-title">📝 2. Fase General / Obligatoria (40%)</h3>
+              <div class="pau-inputs-grid">
+                <div class="form-group">
+                  <label for="pauGradeLengua">Lengua Castellana y Literatura</label>
+                  <input type="number" id="pauGradeLengua" class="form-input" min="0" max="10" step="0.01" value="8.50">
+                </div>
+                <div class="form-group">
+                  <label for="pauGradeHistoria">Historia de España / Filosofía</label>
+                  <input type="number" id="pauGradeHistoria" class="form-input" min="0" max="10" step="0.01" value="8.75">
+                </div>
+                <div class="form-group">
+                  <label for="pauGradeIdioma">Primera Lengua Extranjera (Inglés)</label>
+                  <input type="number" id="pauGradeIdioma" class="form-input" min="0" max="10" step="0.01" value="8.00">
+                </div>
+                <div class="form-group">
+                  <label for="pauGradeTroncal">Troncal Modalidad (ej. Matemáticas II / Latín)</label>
+                  <input type="number" id="pauGradeTroncal" class="form-input" min="0" max="10" step="0.01" value="8.25">
+                </div>
+              </div>
+
+              <h3 class="pau-section-title">⭐ 3. Fase Específica / Voluntaria (Hasta 4 puntos)</h3>
+              <div class="pau-inputs-grid">
+                <div class="form-group">
+                  <label for="pauGradeOpt1">Materia Voluntaria 1 (ej: Física / Química)</label>
+                  <div style="display: flex; gap: 8px;">
+                    <input type="number" id="pauGradeOpt1" class="form-input" min="0" max="10" step="0.01" value="8.50" style="flex: 1;">
+                    <select id="pauWeightOpt1" class="filter-select" style="width: 90px;">
+                      <option value="0.2" selected>x 0.2</option>
+                      <option value="0.1">x 0.1</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="pauGradeOpt2">Materia Voluntaria 2 (ej: Biología / Dibujo)</label>
+                  <div style="display: flex; gap: 8px;">
+                    <input type="number" id="pauGradeOpt2" class="form-input" min="0" max="10" step="0.01" value="9.00" style="flex: 1;">
+                    <select id="pauWeightOpt2" class="filter-select" style="width: 90px;">
+                      <option value="0.2" selected>x 0.2</option>
+                      <option value="0.1">x 0.1</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Panel de Resultados de Admisión -->
+            <div class="pau-result-panel">
+              <div class="pau-score-hero">
+                <h4>Nota de Admisión Simulada</h4>
+                <div class="pau-grand-total" id="pauTotalScore">12.250</div>
+                <p>Sobre un total máximo de 14.000 puntos</p>
+              </div>
+
+              <h4 style="font-size: 0.95rem; margin-bottom: 12px;">Desglose Oficial del Cálculo:</h4>
+              <div class="breakdown-row">
+                <span class="breakdown-label">Media Bachillerato (NMB):</span>
+                <span class="breakdown-val" id="pauNmbVal">8.500</span>
+              </div>
+              <div class="breakdown-row">
+                <span class="breakdown-label">Aporte Bachillerato (60%):</span>
+                <span class="breakdown-val" id="pauNmb60Val">5.100</span>
+              </div>
+              <div class="breakdown-row">
+                <span class="breakdown-label">Media Fase General (CFG):</span>
+                <span class="breakdown-val" id="pauCfgVal">8.375</span>
+              </div>
+              <div class="breakdown-row">
+                <span class="breakdown-label">Aporte Fase General (40%):</span>
+                <span class="breakdown-val" id="pauCfg40Val">3.350</span>
+              </div>
+              <div class="breakdown-row" style="background: var(--bg-card-muted); padding: 8px 10px; border-radius: 6px;">
+                <span class="breakdown-label" style="font-weight: 600;">Calificación de Acceso (sobre 10):</span>
+                <span class="breakdown-val" id="pauAcceso10Val" style="color: var(--primary);">8.450</span>
+              </div>
+              <div class="breakdown-row">
+                <span class="breakdown-label">Puntos Ponderación Materia 1:</span>
+                <span class="breakdown-val" id="pauOpt1PointsVal">+ 1.700</span>
+              </div>
+              <div class="breakdown-row">
+                <span class="breakdown-label">Puntos Ponderación Materia 2:</span>
+                <span class="breakdown-val" id="pauOpt2PointsVal">+ 1.800</span>
+              </div>
+
+              <div style="margin-top: 20px; padding: 14px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: var(--radius-md); font-size: 0.82rem; color: var(--text-secondary);">
+                💡 <strong>Consejo EBAU:</strong> Las asignaturas de la fase específica que ponderan 0.2 duplican su aporte frente a las de 0.1. Asegúrate de consultar la tabla de ponderaciones de la universidad y grado de tu comunidad autónoma.
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- ==================== DIÁLOGOS MODALES ==================== -->
+
+  <!-- MODAL 1: TAREA -->
+  <div class="modal-overlay" id="modalTask">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="modalTaskTitle">Nueva Tarea</h3>
+        <button class="modal-close-btn" data-close-modal>&times;</button>
+      </div>
+      <form id="taskForm">
+        <input type="hidden" id="taskId">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="taskTitleInput">Título de la tarea o entrega *</label>
+            <input type="text" id="taskTitleInput" class="form-input" required placeholder="Ej: Comentario crítico de texto">
+          </div>
+
+          <div class="pau-inputs-grid" style="margin-bottom: 0;">
+            <div class="form-group">
+              <label for="taskSubjectSelect">Asignatura *</label>
+              <select id="taskSubjectSelect" class="filter-select" required></select>
+            </div>
+            <div class="form-group">
+              <label for="taskPrioritySelect">Prioridad</label>
+              <select id="taskPrioritySelect" class="filter-select">
+                <option value="alta">🔴 Alta</option>
+                <option value="media" selected>🟡 Media</option>
+                <option value="baja">🔵 Baja</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="pau-inputs-grid" style="margin-bottom: 0;">
+            <div class="form-group">
+              <label for="taskDueDate">Fecha de entrega *</label>
+              <input type="date" id="taskDueDate" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label for="taskDueTime">Hora límite</label>
+              <input type="time" id="taskDueTime" class="form-input" value="23:59">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="taskStatusSelect">Estado</label>
+            <select id="taskStatusSelect" class="filter-select">
+              <option value="pendiente">⏳ Pendiente</option>
+              <option value="en_progreso">🚀 En Progreso</option>
+              <option value="completada">✅ Completada</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="taskDescription">Instrucciones o detalles</label>
+            <textarea id="taskDescription" class="form-input" rows="3" placeholder="Páginas del libro, criterios de evaluación, etc."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Subtareas / Pasos de realización</label>
+            <div class="subtasks-editor-list" id="modalSubtasksList"></div>
+            <div style="display: flex; gap: 8px; margin-top: 8px;">
+              <input type="text" id="newSubtaskInput" class="form-input" placeholder="Añadir subtarea..." style="flex: 1;">
+              <button type="button" class="btn btn-secondary btn-sm" id="addSubtaskBtn">+ Añadir</button>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-close-modal>Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar Tarea</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 2: EXAMEN -->
+  <div class="modal-overlay" id="modalExam">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="modalExamTitle">Nuevo Examen</h3>
+        <button class="modal-close-btn" data-close-modal>&times;</button>
+      </div>
+      <form id="examForm">
+        <input type="hidden" id="examId">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="examTitleInput">Título del examen / control *</label>
+            <input type="text" id="examTitleInput" class="form-input" required placeholder="Ej: Parcial de Derivadas e Integrales">
+          </div>
+
+          <div class="pau-inputs-grid" style="margin-bottom: 0;">
+            <div class="form-group">
+              <label for="examSubjectSelect">Asignatura *</label>
+              <select id="examSubjectSelect" class="filter-select" required></select>
+            </div>
+            <div class="form-group">
+              <label for="examWeightInput">Ponderación / Peso (%)</label>
+              <input type="number" id="examWeightInput" class="form-input" min="1" max="100" value="40">
+            </div>
+          </div>
+
+          <div class="pau-inputs-grid" style="margin-bottom: 0;">
+            <div class="form-group">
+              <label for="examDateInput">Fecha del examen *</label>
+              <input type="date" id="examDateInput" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label for="examTimeInput">Hora</label>
+              <input type="time" id="examTimeInput" class="form-input" value="08:00">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="examTopicsInput">Temario incluido *</label>
+            <textarea id="examTopicsInput" class="form-input" rows="2" placeholder="Ej: Temas 1, 2 y 3 (Límites, Continuidad y Teoremas de Bolzano/Rolle)"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="examGradeInput">Nota obtenida (deja en blanco si aún no se ha realizado)</label>
+            <input type="number" id="examGradeInput" class="form-input" min="0" max="10" step="0.01" placeholder="Ej: 8.75">
+          </div>
+
+          <div class="form-group">
+            <label for="examNotesInput">Observaciones / Material permitido</label>
+            <input type="text" id="examNotesInput" class="form-input" placeholder="Ej: Calculadora científica no gráfica, tabla periódica...">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-close-modal>Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar Examen</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 3: ASIGNATURA -->
+  <div class="modal-overlay" id="modalSubject">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="modalSubjectTitle">Nueva Asignatura</h3>
+        <button class="modal-close-btn" data-close-modal>&times;</button>
+      </div>
+      <form id="subjectForm">
+        <input type="hidden" id="subjectId">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="subjectNameInput">Nombre de la asignatura *</label>
+            <input type="text" id="subjectNameInput" class="form-input" required placeholder="Ej: Física Cuántica y Nuclear">
+          </div>
+
+          <div class="pau-inputs-grid" style="margin-bottom: 0;">
+            <div class="form-group">
+              <label for="subjectCodeInput">Código abreviado</label>
+              <input type="text" id="subjectCodeInput" class="form-input" maxlength="4" placeholder="Ej: FIS">
+            </div>
+            <div class="form-group">
+              <label for="subjectCreditsInput">Horas semanales</label>
+              <input type="number" id="subjectCreditsInput" class="form-input" min="1" max="10" value="4">
+            </div>
+          </div>
+
+          <div class="pau-inputs-grid" style="margin-bottom: 0;">
+            <div class="form-group">
+              <label for="subjectTeacherInput">Profesor/a</label>
+              <input type="text" id="subjectTeacherInput" class="form-input" placeholder="Ej: D. Antonio García">
+            </div>
+            <div class="form-group">
+              <label for="subjectRoomInput">Aula habitual</label>
+              <input type="text" id="subjectRoomInput" class="form-input" placeholder="Ej: Aula 204">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Color distintivo</label>
+            <div class="color-picker-group" id="subjectColorPicker"></div>
+            <input type="hidden" id="subjectSelectedColor">
+          </div>
+
+          <div class="form-group">
+            <label>Icono</label>
+            <div class="icon-picker-group" id="subjectIconPicker"></div>
+            <input type="hidden" id="subjectSelectedIcon">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-close-modal>Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar Asignatura</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 4: FRANJA DE HORARIO -->
+  <div class="modal-overlay" id="modalSlot">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="modalSlotTitle">Añadir Clase al Horario</h3>
+        <button class="modal-close-btn" data-close-modal>&times;</button>
+      </div>
+      <form id="slotForm">
+        <input type="hidden" id="slotId">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="slotDaySelect">Día de la semana *</label>
+            <select id="slotDaySelect" class="filter-select" required>
+              <option value="1">Lunes</option>
+              <option value="2">Martes</option>
+              <option value="3">Miércoles</option>
+              <option value="4">Jueves</option>
+              <option value="5">Viernes</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="slotSubjectSelect">Asignatura *</label>
+            <select id="slotSubjectSelect" class="filter-select" required></select>
+          </div>
+
+          <div class="pau-inputs-grid" style="margin-bottom: 0;">
+            <div class="form-group">
+              <label for="slotStartTime">Hora inicio *</label>
+              <input type="time" id="slotStartTime" class="form-input" required value="08:00">
+            </div>
+            <div class="form-group">
+              <label for="slotEndTime">Hora fin *</label>
+              <input type="time" id="slotEndTime" class="form-input" required value="08:55">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="slotRoomInput">Aula específica (opcional)</label>
+            <input type="text" id="slotRoomInput" class="form-input" placeholder="Ej: Laboratorio 1">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" id="deleteSlotBtn" style="margin-right: auto; display: none;">Eliminar Clase</button>
+          <button type="button" class="btn btn-secondary" data-close-modal>Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar Clase</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 5: APUNTE (EDITOR COMPLETO) -->
+  <div class="modal-overlay" id="modalNoteEditor">
+    <div class="modal-box" style="max-width: 780px;">
+      <div class="modal-header">
+        <h3 id="modalNoteFormTitle">Redactar Apunte</h3>
+        <button class="modal-close-btn" data-close-modal>&times;</button>
+      </div>
+      <form id="noteForm">
+        <input type="hidden" id="noteId">
+        <div class="modal-body">
+          <div class="pau-inputs-grid" style="margin-bottom: 0;">
+            <div class="form-group">
+              <label for="noteSubjectSelect">Asignatura *</label>
+              <select id="noteSubjectSelect" class="filter-select" required></select>
+            </div>
+            <div class="form-group">
+              <label for="noteTopicInput">Tema / Bloque temático *</label>
+              <input type="text" id="noteTopicInput" class="form-input" required placeholder="Ej: Tema 2: Cinemática y Dinámica">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="noteTitleInput">Título del apunte *</label>
+            <input type="text" id="noteTitleInput" class="form-input" required placeholder="Ej: Leyes de Newton y Fuerzas de Rozamiento">
+          </div>
+
+          <div class="form-group">
+            <label for="noteTagsInput">Etiquetas (separadas por comas)</label>
+            <input type="text" id="noteTagsInput" class="form-input" placeholder="Ej: EBAU, Fórmulas, Clave">
+          </div>
+
+          <!-- Barra de herramientas para snippets de estudio -->
+          <div class="form-group">
+            <label>Contenido del apunte (Soporta Markdown y Bloques de Estudio)</label>
+            <div class="note-editor-toolbar">
+              <button type="button" class="toolbar-btn" data-snippet="bold" title="Texto en negrita"><strong>B</strong></button>
+              <button type="button" class="toolbar-btn" data-snippet="italic" title="Texto en cursiva"><em>I</em></button>
+              <button type="button" class="toolbar-btn" data-snippet="h2" title="Encabezado H2">H2</button>
+              <button type="button" class="toolbar-btn" data-snippet="h3" title="Encabezado H3">H3</button>
+              <button type="button" class="toolbar-btn" data-snippet="list" title="Lista de viñetas">&bull; Lista</button>
+              <button type="button" class="toolbar-btn" data-snippet="definition" title="Insertar bloque de definición">💡 Definición</button>
+              <button type="button" class="toolbar-btn" data-snippet="formula" title="Insertar fórmula clave">📐 Fórmula</button>
+              <button type="button" class="toolbar-btn" data-snippet="alert" title="Insertar aviso importante para examen">⚠️ Ojo Examen</button>
+              <button type="button" class="toolbar-btn" data-snippet="example" title="Insertar ejemplo práctico">📝 Ejemplo</button>
+              <button type="button" class="toolbar-btn" data-snippet="math" title="Fórmula matemática en línea">$x$</button>
+            </div>
+            <textarea id="noteContentInput" class="form-input" rows="12" style="font-family: 'SFMono-Regular', Consolas, monospace; line-height: 1.5;" placeholder="Escribe tus notas aquí. Puedes usar las herramientas superiores para añadir definiciones, fórmulas o advertencias de examen..."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-close-modal>Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar Apunte</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 6: AJUSTES Y BACKUP -->
+  <div class="modal-overlay" id="modalSettings">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>Ajustes y Datos</h3>
+        <button class="modal-close-btn" data-close-modal>&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="settingsStudentName">Nombre del estudiante</label>
+          <input type="text" id="settingsStudentName" class="form-input" placeholder="Tu nombre">
+        </div>
+
+        <div class="pau-inputs-grid" style="margin-bottom: 0;">
+          <div class="form-group">
+            <label for="settingsCourse">Curso</label>
+            <select id="settingsCourse" class="filter-select">
+              <option value="1º Bachillerato">1º Bachillerato</option>
+              <option value="2º Bachillerato" selected>2º Bachillerato</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="settingsModality">Modalidad</label>
+            <select id="settingsModality" class="filter-select">
+              <option value="Ciencias y Tecnología" selected>Ciencias y Tecnología</option>
+              <option value="Humanidades y Ciencias Sociales">Humanidades y CC. Sociales</option>
+              <option value="Artes">Artes</option>
+              <option value="General">Bachillerato General</option>
+            </select>
+          </div>
+        </div>
+
+        <hr class="note-divider">
+
+        <h4 style="font-size: 0.95rem; font-weight: 700;">Copia de Seguridad y Restauración</h4>
+        <p style="font-size: 0.8rem; color: var(--text-secondary);">
+          Todos tus datos se guardan de forma privada en tu navegador. Puedes descargar una copia en archivo JSON o restaurarla en otro equipo.
+        </p>
+
+        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+          <button class="btn btn-secondary btn-sm" id="exportBackupBtn">💾 Descargar Copia de Seguridad (JSON)</button>
+          <label class="btn btn-secondary btn-sm" style="margin: 0; cursor: pointer;">
+            📂 Restaurar Copia
+            <input type="file" id="importBackupFileInput" accept=".json" style="display: none;">
+          </label>
+        </div>
+
+        <hr class="note-divider">
+
+        <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--danger);">Zona de Peligro</h4>
+        <p style="font-size: 0.8rem; color: var(--text-secondary);">
+          Reinicia la aplicación con los datos de ejemplo iniciales de Bachillerato.
+        </p>
+        <button class="btn btn-danger btn-sm" id="resetDataBtn">⚠️ Restablecer datos predeterminados</button>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" id="saveSettingsBtn">Guardar Ajustes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenedor de Alertas Toast -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- SCRIPT PRINCIPAL AUTÓNOMO (Sin bloqueo CORS) -->
+  <script>
+/**
+ * BachiTrack - Bundle Completo Autónomo
+ * Contiene Store, Editor de Apuntes y Controlador de la Aplicación.
+ * Diseñado para funcionar 100% offline y sin restricciones CORS bajo protocolo file:// o servidor local.
+ */
+
+(function() {
+  'use strict';
+
+  /* ==========================================================================
+     1. CONSTANTES Y DATOS DE PRUEBA DE BACHILLERATO
+     ========================================================================== */
+
+  const STORAGE_KEY = 'bachitrack_data_v1';
+  const SETTINGS_KEY = 'bachitrack_settings_v1';
+
+  const SUBJECT_COLORS = [
+    '#3b82f6', // Azul eléctrico
+    '#10b981', // Verde esmeralda
+    '#8b5cf6', // Violeta
+    '#f59e0b', // Ámbar / Naranja
+    '#ec4899', // Rosa
+    '#06b6d4', // Cian
+    '#ef4444', // Rojo coral
+    '#14b8a6', // Turquesa
+    '#6366f1', // Índigo
+    '#84cc16'  // Lima
+  ];
+
+  const SUBJECT_ICONS = ['📐', '⚡', '📖', '🏛️', '🇬🇧', '🧪', '🧬', '🌍', '🎨', '💻', '⚖️', '📊'];
+
+  const DEFAULT_SUBJECTS = [
+    {
+      id: 'sub_mat',
+      name: 'Matemáticas II',
+      code: 'MAT',
+      teacher: 'Prof. García',
+      room: 'Aula 204',
+      color: '#3b82f6',
+      icon: '📐',
+      creditWeight: 4
+    },
+    {
+      id: 'sub_fis',
+      name: 'Física',
+      code: 'FIS',
+      teacher: 'Dra. Martínez',
+      room: 'Lab Física',
+      color: '#8b5cf6',
+      icon: '⚡',
+      creditWeight: 4
+    },
+    {
+      id: 'sub_len',
+      name: 'Lengua Castellana y Literatura',
+      code: 'LCL',
+      teacher: 'Prof. Sanchís',
+      room: 'Aula 204',
+      color: '#ec4899',
+      icon: '📖',
+      creditWeight: 3
+    },
+    {
+      id: 'sub_his',
+      name: 'Historia de España',
+      code: 'HDE',
+      teacher: 'Prof. Navarro',
+      room: 'Aula 102',
+      color: '#f59e0b',
+      icon: '🏛️',
+      creditWeight: 3
+    },
+    {
+      id: 'sub_ing',
+      name: 'Inglés',
+      code: 'ING',
+      teacher: 'Ms. Jenkins',
+      room: 'Aula Idiomas',
+      color: '#06b6d4',
+      icon: '🇬🇧',
+      creditWeight: 3
+    },
+    {
+      id: 'sub_qui',
+      name: 'Química',
+      code: 'QUI',
+      teacher: 'Prof. Ruiz',
+      room: 'Lab Química',
+      color: '#10b981',
+      icon: '🧪',
+      creditWeight: 4
+    }
+  ];
+
+  const DEFAULT_SCHEDULE = [
+    // Lunes
+    { id: 'sch_1', day: 1, startTime: '08:00', endTime: '08:55', subjectId: 'sub_mat', room: 'Aula 204' },
+    { id: 'sch_2', day: 1, startTime: '08:55', endTime: '09:50', subjectId: 'sub_fis', room: 'Lab Física' },
+    { id: 'sch_3', day: 1, startTime: '09:50', endTime: '10:45', subjectId: 'sub_len', room: 'Aula 204' },
+    // Recreo 10:45 - 11:15
+    { id: 'sch_4', day: 1, startTime: '11:15', endTime: '12:10', subjectId: 'sub_his', room: 'Aula 102' },
+    { id: 'sch_5', day: 1, startTime: '12:10', endTime: '13:05', subjectId: 'sub_ing', room: 'Aula Idiomas' },
+    { id: 'sch_6', day: 1, startTime: '13:05', endTime: '14:00', subjectId: 'sub_qui', room: 'Lab Química' },
+
+    // Martes
+    { id: 'sch_7', day: 2, startTime: '08:00', endTime: '08:55', subjectId: 'sub_fis', room: 'Aula 204' },
+    { id: 'sch_8', day: 2, startTime: '08:55', endTime: '09:50', subjectId: 'sub_mat', room: 'Aula 204' },
+    { id: 'sch_9', day: 2, startTime: '09:50', endTime: '10:45', subjectId: 'sub_qui', room: 'Lab Química' },
+    { id: 'sch_10', day: 2, startTime: '11:15', endTime: '12:10', subjectId: 'sub_len', room: 'Aula 204' },
+    { id: 'sch_11', day: 2, startTime: '12:10', endTime: '13:05', subjectId: 'sub_his', room: 'Aula 102' },
+    { id: 'sch_12', day: 2, startTime: '13:05', endTime: '14:00', subjectId: 'sub_ing', room: 'Aula Idiomas' },
+
+    // Miércoles
+    { id: 'sch_13', day: 3, startTime: '08:00', endTime: '08:55', subjectId: 'sub_qui', room: 'Lab Química' },
+    { id: 'sch_14', day: 3, startTime: '08:55', endTime: '09:50', subjectId: 'sub_fis', room: 'Lab Física' },
+    { id: 'sch_15', day: 3, startTime: '09:50', endTime: '10:45', subjectId: 'sub_mat', room: 'Aula 204' },
+    { id: 'sch_16', day: 3, startTime: '11:15', endTime: '12:10', subjectId: 'sub_len', room: 'Aula 204' },
+    { id: 'sch_17', day: 3, startTime: '12:10', endTime: '13:05', subjectId: 'sub_his', room: 'Aula 102' },
+
+    // Jueves
+    { id: 'sch_18', day: 4, startTime: '08:00', endTime: '08:55', subjectId: 'sub_mat', room: 'Aula 204' },
+    { id: 'sch_19', day: 4, startTime: '08:55', endTime: '09:50', subjectId: 'sub_ing', room: 'Aula Idiomas' },
+    { id: 'sch_20', day: 4, startTime: '09:50', endTime: '10:45', subjectId: 'sub_fis', room: 'Aula 204' },
+    { id: 'sch_21', day: 4, startTime: '11:15', endTime: '12:10', subjectId: 'sub_qui', room: 'Lab Química' },
+    { id: 'sch_22', day: 4, startTime: '12:10', endTime: '13:05', subjectId: 'sub_len', room: 'Aula 204' },
+
+    // Viernes
+    { id: 'sch_23', day: 5, startTime: '08:00', endTime: '08:55', subjectId: 'sub_his', room: 'Aula 102' },
+    { id: 'sch_24', day: 5, startTime: '08:55', endTime: '09:50', subjectId: 'sub_mat', room: 'Aula 204' },
+    { id: 'sch_25', day: 5, startTime: '09:50', endTime: '10:45', subjectId: 'sub_ing', room: 'Aula Idiomas' },
+    { id: 'sch_26', day: 5, startTime: '11:15', endTime: '12:10', subjectId: 'sub_fis', room: 'Aula 204' },
+    { id: 'sch_27', day: 5, startTime: '12:10', endTime: '13:05', subjectId: 'sub_qui', room: 'Lab Química' }
+  ];
+
+  function getRelativeDate(daysOffset) {
+    const d = new Date();
+    d.setDate(d.getDate() + daysOffset);
+    return d.toISOString().split('T')[0];
+  }
+
+  const DEFAULT_TASKS = [
+    {
+      id: 'task_1',
+      title: 'Comentario de texto crítico: Generación del 98',
+      subjectId: 'sub_len',
+      dueDate: getRelativeDate(2),
+      dueTime: '23:59',
+      priority: 'alta',
+      status: 'en_progreso',
+      description: 'Analizar el fragmento de "Campos de Castilla" de Antonio Machado. Estructura, figuras retóricas y tema central.',
+      subtasks: [
+        { id: 'st_1', text: 'Lectura atenta y subrayado', completed: true },
+        { id: 'st_2', text: 'Esquema de ideas y estructura', completed: true },
+        { id: 'st_3', text: 'Redacción del comentario crítico', completed: false },
+        { id: 'st_4', text: 'Revisión ortográfica y citas', completed: false }
+      ]
+    },
+    {
+      id: 'task_2',
+      title: 'Boletín de ejercicios: Integrales definidas y áreas',
+      subjectId: 'sub_mat',
+      dueDate: getRelativeDate(4),
+      dueTime: '14:00',
+      priority: 'alta',
+      status: 'pendiente',
+      description: 'Problemas 14 a 28 de la página 165 del libro. Especial énfasis en cálculo de áreas comprendidas entre dos funciones.',
+      subtasks: [
+        { id: 'st_5', text: 'Ejercicios de integración inmediata', completed: false },
+        { id: 'st_6', text: 'Cálculo de puntos de corte entre curvas', completed: false },
+        { id: 'st_7', text: 'Aplicación de la Regla de Barrow', completed: false }
+      ]
+    },
+    {
+      id: 'task_3',
+      title: 'Informe de laboratorio: Ley de Snell y refracción',
+      subjectId: 'sub_fis',
+      dueDate: getRelativeDate(6),
+      dueTime: '20:00',
+      priority: 'media',
+      status: 'pendiente',
+      description: 'Memoria de la práctica con datos experimentales del índice de refracción del metacrilato.',
+      subtasks: [
+        { id: 'st_8', text: 'Tabular datos de ángulos incidente y refractado', completed: false },
+        { id: 'st_9', text: 'Representar gráfica sen(i) vs sen(r)', completed: false }
+      ]
+    },
+    {
+      id: 'task_4',
+      title: 'Writing: Opinion Essay (200 words)',
+      subjectId: 'sub_ing',
+      dueDate: getRelativeDate(-1),
+      dueTime: '23:59',
+      priority: 'media',
+      status: 'completada',
+      description: 'Topic: "Is artificial intelligence a threat or an opportunity for future careers?" Use connectors of contrast and purpose.',
+      subtasks: [
+        { id: 'st_10', text: 'Brainstorming de ideas', completed: true },
+        { id: 'st_11', text: 'Borrador inicial', completed: true },
+        { id: 'st_12', text: 'Entrega en plataforma virtual', completed: true }
+      ]
+    }
+  ];
+
+  const DEFAULT_EXAMS = [
+    {
+      id: 'exam_1',
+      title: 'Examen Trimestral: Análisis Matemático',
+      subjectId: 'sub_mat',
+      date: getRelativeDate(5),
+      time: '08:00',
+      weight: 40,
+      topics: 'Límites, Continuidad, Derivabilidad, Teoremas del Valor Medio, Optimización e Integrales.',
+      grade: null,
+      notes: 'Traer calculadora no programable permitida en EBAU/PAU.'
+    },
+    {
+      id: 'exam_2',
+      title: 'Parcial: Campo Gravitatorio e Inducción',
+      subjectId: 'sub_fis',
+      date: getRelativeDate(11),
+      time: '08:55',
+      weight: 35,
+      topics: 'Ley de Gravitación Universal, Energía Potencial Gravitatoria, Órbitas, Ley de Faraday-Lenz.',
+      grade: null,
+      notes: 'Formulario básico incluido en el encabezado del examen.'
+    },
+    {
+      id: 'exam_3',
+      title: 'Primer Examen: La Restauración Borbónica',
+      subjectId: 'sub_his',
+      date: getRelativeDate(-7),
+      time: '11:15',
+      weight: 30,
+      topics: 'Constitución de 1876, el Turno de partidos, caciquismo y la crisis del 98.',
+      grade: 8.75,
+      notes: 'Comentario de fuente histórica (Manifiesto de Sandhurst).'
+    },
+    {
+      id: 'exam_4',
+      title: 'Control de Química Orgánica',
+      subjectId: 'sub_qui',
+      date: getRelativeDate(-14),
+      time: '13:05',
+      weight: 25,
+      topics: 'Nomenclatura IUPAC, isomería espacial e isomería constitucional, reacciones de adición y sustitución.',
+      grade: 9.2,
+      notes: 'Muy buena nota en formulación.'
+    }
+  ];
+
+  const DEFAULT_NOTES = [
+    {
+      id: 'note_1',
+      subjectId: 'sub_mat',
+      title: 'Teoremas Fundamentales de Continuidad y Derivabilidad',
+      topic: 'Tema 3: Análisis y Cálculo',
+      tags: ['EBAU', 'Teoremas', 'Clave'],
+      updatedAt: new Date().toISOString(),
+      content: `## Teoremas Fundamentales en Bachillerato (Imprescindibles para EBAU)
+
+### 1. Teorema de Bolzano
+> **[DEFINICION]** Si una función $f(x)$ es continua en un intervalo cerrado $[a, b]$ y toma valores de signos opuestos en los extremos ($f(a) \\cdot f(b) < 0$), entonces existe al menos un punto $c \\in (a, b)$ tal que $f(c) = 0$.
+
+- **Aplicación típica en examen**: Demostrar que una ecuación tiene al menos una solución real.
+- **Tip**: Despeja todo a un miembro para igualar a cero: $g(x) = f(x) - k = 0$.
+
+---
+
+### 2. Teorema de Rolle
+> **[DEFINICION]** Si $f(x)$ es continua en $[a, b]$, derivable en $(a, b)$ y además $f(a) = f(b)$, existe al menos un punto $c \\in (a, b)$ tal que $f'(c) = 0$.
+
+---
+
+### 3. Teorema del Valor Medio (Lagrange)
+> **[FORMULA]** Existe $c \\in (a, b)$ tal que:
+> $f'(c) = \\frac{f(b) - f(a)}{b - a}$
+
+- **Significado geométrico**: La pendiente de la recta secante que une $(a, f(a))$ y $(b, f(b))$ coincide con la pendiente de la recta tangente en algún punto intermedio $c$.
+
+> **[IMPORTANTE]** No olvides justificar SIEMPRE primero que la función es **continua en el intervalo cerrado** y **derivable en el intervalo abierto** antes de aplicar el teorema.`
+    },
+    {
+      id: 'note_2',
+      subjectId: 'sub_fis',
+      title: 'Campo Gravitatorio: Órbitas y Velocidades',
+      topic: 'Tema 1: Gravitación Universal',
+      tags: ['Fórmulas', 'Satélites'],
+      updatedAt: new Date().toISOString(),
+      content: `## Satélites y Órbitas Circulares
+
+### Fuerza gravitatoria y centrípeta
+En una órbita circular, la única fuerza que actúa es la atracción gravitatoria, que ejerce el papel de fuerza centrípeta:
+
+> **[FORMULA]**
+> $F_g = F_c \\implies G \\frac{M \\cdot m}{r^2} = m \\frac{v^2}{r}$
+
+Despejando la velocidad orbital:
+> **[FORMULA]**
+> $v_{orb} = \\sqrt{\\frac{G \\cdot M}{r}}$
+> *Donde $r = R_T + h$ (radio del planeta más la altura de la órbita).*
+
+---
+
+### Periodo de revolución (3ª Ley de Kepler)
+> **[FORMULA]**
+> $T^2 = \\frac{4\\pi^2}{G \\cdot M} r^3$
+
+> **[EJEMPLO]** Satélites Geoestacionarios:
+> Su periodo es igual al de rotación de la Tierra ($T = 24\\text{ horas} = 86400\\text{ s}$). Se sitúan siempre sobre el ecuador a una altura de aproximadamente $36000\\text{ km}$.`
+    },
+    {
+      id: 'note_3',
+      subjectId: 'sub_len',
+      title: 'La Generación del 98: Autores y Temas',
+      topic: 'Literatura Siglo XX',
+      tags: ['Resumen', 'Autores'],
+      updatedAt: new Date().toISOString(),
+      content: `## Contexto: El "Desastre del 98"
+Pérdida de las últimas colonias de ultramar (Cuba, Puerto Rico y Filipinas). Provoca una profunda crisis de identidad nacional y pesimismo intelectual.
+
+### Rasgos Estilísticos y Temáticos:
+1. **Preocupación por España**: Paisaje de Castilla como símbolo del alma española y su pasado histórico.
+2. **Preocupaciones existenciales**: El sentido de la vida, el paso inexorable del tiempo y la muerte (influencia de Schopenhauer y Kierkegaard).
+3. **Sobriedad expresiva**: Rechazo al retoricismo del siglo XIX; búsqueda de precisión léxica y recuperación de términos tradicionales.
+
+### Autores Clave:
+- **Miguel de Unamuno**: *"Niebla"* (nivola), *"San Manuel Bueno, Mártir"*. Lucha entre fe y razón.
+- **Antonio Machado**: *"Soledades, galerías y otros poemas"* (intimista), *"Campos de Castilla"* (social y reflexivo).
+- **Pío Baroja**: *"El árbol de la ciencia"*, *"Zalacaín el aventurero"*. Escepticismo vital.`
+    }
+  ];
+
+  const DEFAULT_SETTINGS = {
+    theme: 'dark',
+    studentName: 'Estudiante de Bachillerato',
+    bachilleratoCourse: '2º Bachillerato',
+    modality: 'Ciencias y Tecnología',
+    pauWeightings: {
+      m1Weight: 0.2,
+      m2Weight: 0.2
+    }
+  };
+
+  /* ==========================================================================
+     2. CAPA DE DATOS Y PERSISTENCIA (DataStore)
+     ========================================================================== */
+
+  class DataStore {
+    constructor() {
+      this.subjects = [];
+      this.schedule = [];
+      this.tasks = [];
+      this.exams = [];
+      this.notes = [];
+      this.settings = { ...DEFAULT_SETTINGS };
+      this.init();
+    }
+
+    init() {
+      try {
+        const storedData = localStorage.getItem(STORAGE_KEY);
+        if (storedData) {
+          const parsed = JSON.parse(storedData);
+          this.subjects = parsed.subjects || [];
+          this.schedule = parsed.schedule || [];
+          this.tasks = parsed.tasks || [];
+          this.exams = parsed.exams || [];
+          this.notes = parsed.notes || [];
+        } else {
+          this.resetToDefaults();
+        }
+
+        const storedSettings = localStorage.getItem(SETTINGS_KEY);
+        if (storedSettings) {
+          this.settings = { ...DEFAULT_SETTINGS, ...JSON.parse(storedSettings) };
+        }
+      } catch (err) {
+        console.error('Error al inicializar el almacén de datos:', err);
+        this.resetToDefaults();
+      }
+    }
+
+    save() {
+      try {
+        const dataToStore = {
+          subjects: this.subjects,
+          schedule: this.schedule,
+          tasks: this.tasks,
+          exams: this.exams,
+          notes: this.notes
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToStore));
+        localStorage.setItem(SETTINGS_KEY, JSON.stringify(this.settings));
+        window.dispatchEvent(new CustomEvent('bachitrack-data-changed'));
+      } catch (err) {
+        console.error('Error al guardar datos en localStorage:', err);
+      }
+    }
+
+    resetToDefaults() {
+      this.subjects = JSON.parse(JSON.stringify(DEFAULT_SUBJECTS));
+      this.schedule = JSON.parse(JSON.stringify(DEFAULT_SCHEDULE));
+      this.tasks = JSON.parse(JSON.stringify(DEFAULT_TASKS));
+      this.exams = JSON.parse(JSON.stringify(DEFAULT_EXAMS));
+      this.notes = JSON.parse(JSON.stringify(DEFAULT_NOTES));
+      this.settings = JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
+      this.save();
+    }
+
+    getSubjects() { return this.subjects; }
+    getSubjectById(id) { return this.subjects.find(s => s.id === id) || null; }
+
+    addSubject(subject) {
+      const newSubject = {
+        id: 'sub_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 4),
+        name: subject.name.trim(),
+        code: (subject.code || subject.name.slice(0, 3)).toUpperCase(),
+        teacher: subject.teacher || '',
+        room: subject.room || '',
+        color: subject.color || SUBJECT_COLORS[0],
+        icon: subject.icon || '📚',
+        creditWeight: Number(subject.creditWeight) || 3
+      };
+      this.subjects.push(newSubject);
+      this.save();
+      return newSubject;
+    }
+
+    updateSubject(id, updatedData) {
+      const index = this.subjects.findIndex(s => s.id === id);
+      if (index !== -1) {
+        this.subjects[index] = { ...this.subjects[index], ...updatedData };
+        this.save();
+        return this.subjects[index];
+      }
+      return null;
+    }
+
+    deleteSubject(id) {
+      this.subjects = this.subjects.filter(s => s.id !== id);
+      this.schedule = this.schedule.filter(slot => slot.subjectId !== id);
+      this.tasks = this.tasks.filter(t => t.subjectId !== id);
+      this.exams = this.exams.filter(e => e.subjectId !== id);
+      this.notes = this.notes.filter(n => n.subjectId !== id);
+      this.save();
+    }
+
+    getSchedule() { return this.schedule; }
+
+    addScheduleSlot(slot) {
+      const newSlot = {
+        id: 'sch_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 4),
+        day: Number(slot.day),
+        startTime: slot.startTime,
+        endTime: slot.endTime,
+        subjectId: slot.subjectId,
+        room: slot.room || ''
+      };
+      this.schedule.push(newSlot);
+      this.save();
+      return newSlot;
+    }
+
+    updateScheduleSlot(id, updatedData) {
+      const idx = this.schedule.findIndex(s => s.id === id);
+      if (idx !== -1) {
+        this.schedule[idx] = { ...this.schedule[idx], ...updatedData };
+        this.save();
+        return this.schedule[idx];
+      }
+      return null;
+    }
+
+    deleteScheduleSlot(id) {
+      this.schedule = this.schedule.filter(s => s.id !== id);
+      this.save();
+    }
+
+    getTasks() { return this.tasks; }
+    getTaskById(id) { return this.tasks.find(t => t.id === id) || null; }
+
+    addTask(task) {
+      const newTask = {
+        id: 'task_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 4),
+        title: task.title.trim(),
+        subjectId: task.subjectId,
+        dueDate: task.dueDate,
+        dueTime: task.dueTime || '23:59',
+        priority: task.priority || 'media',
+        status: task.status || 'pendiente',
+        description: task.description || '',
+        subtasks: task.subtasks || []
+      };
+      this.tasks.push(newTask);
+      this.save();
+      return newTask;
+    }
+
+    updateTask(id, updatedData) {
+      const index = this.tasks.findIndex(t => t.id === id);
+      if (index !== -1) {
+        this.tasks[index] = { ...this.tasks[index], ...updatedData };
+        this.save();
+        return this.tasks[index];
+      }
+      return null;
+    }
+
+    toggleTaskStatus(id) {
+      const task = this.getTaskById(id);
+      if (task) {
+        const nextStatus = task.status === 'completada' ? 'pendiente' : 'completada';
+        return this.updateTask(id, { status: nextStatus });
+      }
+      return null;
+    }
+
+    deleteTask(id) {
+      this.tasks = this.tasks.filter(t => t.id !== id);
+      this.save();
+    }
+
+    getExams() { return this.exams; }
+    getExamById(id) { return this.exams.find(e => e.id === id) || null; }
+
+    addExam(exam) {
+      const newExam = {
+        id: 'exam_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 4),
+        title: exam.title.trim(),
+        subjectId: exam.subjectId,
+        date: exam.date,
+        time: exam.time || '08:00',
+        weight: Number(exam.weight) || 30,
+        topics: exam.topics || '',
+        grade: exam.grade !== undefined && exam.grade !== null && exam.grade !== '' ? Number(exam.grade) : null,
+        notes: exam.notes || ''
+      };
+      this.exams.push(newExam);
+      this.save();
+      return newExam;
+    }
+
+    updateExam(id, updatedData) {
+      const index = this.exams.findIndex(e => e.id === id);
+      if (index !== -1) {
+        if (updatedData.grade !== undefined) {
+          updatedData.grade = (updatedData.grade === null || updatedData.grade === '') ? null : Number(updatedData.grade);
+        }
+        this.exams[index] = { ...this.exams[index], ...updatedData };
+        this.save();
+        return this.exams[index];
+      }
+      return null;
+    }
+
+    deleteExam(id) {
+      this.exams = this.exams.filter(e => e.id !== id);
+      this.save();
+    }
+
+    getNotes() { return this.notes; }
+    getNoteById(id) { return this.notes.find(n => n.id === id) || null; }
+
+    addNote(note) {
+      const newNote = {
+        id: 'note_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 4),
+        subjectId: note.subjectId,
+        title: note.title.trim(),
+        topic: note.topic || 'General',
+        tags: Array.isArray(note.tags) ? note.tags : (note.tags ? note.tags.split(',').map(t => t.trim()).filter(Boolean) : []),
+        content: note.content || '',
+        updatedAt: new Date().toISOString()
+      };
+      this.notes.unshift(newNote);
+      this.save();
+      return newNote;
+    }
+
+    updateNote(id, updatedData) {
+      const index = this.notes.findIndex(n => n.id === id);
+      if (index !== -1) {
+        if (updatedData.tags && typeof updatedData.tags === 'string') {
+          updatedData.tags = updatedData.tags.split(',').map(t => t.trim()).filter(Boolean);
+        }
+        this.notes[index] = {
+          ...this.notes[index],
+          ...updatedData,
+          updatedAt: new Date().toISOString()
+        };
+        this.save();
+        return this.notes[index];
+      }
+      return null;
+    }
+
+    deleteNote(id) {
+      this.notes = this.notes.filter(n => n.id !== id);
+      this.save();
+    }
+
+    getSettings() { return this.settings; }
+
+    updateSettings(newSettings) {
+      this.settings = { ...this.settings, ...newSettings };
+      this.save();
+      return this.settings;
+    }
+
+    exportJSON() {
+      const exportData = {
+        version: '1.0',
+        exportedAt: new Date().toISOString(),
+        subjects: this.subjects,
+        schedule: this.schedule,
+        tasks: this.tasks,
+        exams: this.exams,
+        notes: this.notes,
+        settings: this.settings
+      };
+      return JSON.stringify(exportData, null, 2);
+    }
+
+    importJSON(jsonString) {
+      try {
+        const data = JSON.parse(jsonString);
+        if (!data.subjects || !Array.isArray(data.subjects)) {
+          throw new Error('Formato de datos no válido: faltan asignaturas');
+        }
+        this.subjects = data.subjects || [];
+        this.schedule = data.schedule || [];
+        this.tasks = data.tasks || [];
+        this.exams = data.exams || [];
+        this.notes = data.notes || [];
+        if (data.settings) {
+          this.settings = { ...DEFAULT_SETTINGS, ...data.settings };
+        }
+        this.save();
+        return { success: true };
+      } catch (err) {
+        return { success: false, error: err.message };
+      }
+    }
+
+    getSubjectAverageGrade(subjectId) {
+      const subjectExams = this.exams.filter(e => e.subjectId === subjectId && e.grade !== null);
+      if (subjectExams.length === 0) return null;
+
+      let totalWeightedScore = 0;
+      let totalWeight = 0;
+
+      subjectExams.forEach(e => {
+        const weight = e.weight > 0 ? e.weight : 1;
+        totalWeightedScore += e.grade * weight;
+        totalWeight += weight;
+      });
+
+      return totalWeight > 0 ? Number((totalWeightedScore / totalWeight).toFixed(2)) : null;
+    }
+
+    getOverallAverageGrade() {
+      const subjectsWithGrades = this.subjects
+        .map(s => this.getSubjectAverageGrade(s.id))
+        .filter(grade => grade !== null);
+
+      if (subjectsWithGrades.length === 0) return null;
+      const sum = subjectsWithGrades.reduce((acc, g) => acc + g, 0);
+      return Number((sum / subjectsWithGrades.length).toFixed(2));
+    }
+  }
+
+  const store = new DataStore();
+
+  /* ==========================================================================
+     3. VISUALIZADOR Y EDITOR DE APUNTES (NotesEditor)
+     ========================================================================== */
+
+  class NotesEditor {
+    constructor(dataStore) {
+      this.store = dataStore;
+    }
+
+    renderToHtml(markdownText) {
+      if (!markdownText) return '<p class="text-muted">Apunte vacío. Haz clic en "Editar" para redactar tus notas.</p>';
+
+      let html = markdownText;
+
+      html = html
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+
+      // Bloques especiales de estudio
+      html = html.replace(/&gt; \*\*\[DEFINICION\]\*\*\s*([^\n]+(\n&gt; [^\n]+)*)/gi, (match) => {
+        const cleanContent = match.replace(/&gt; \*\*\[DEFINICION\]\*\*\s*/i, '').replace(/\n&gt; /g, '<br>');
+        return `<div class="study-callout study-callout-def">
+          <div class="callout-header"><span class="callout-icon">💡</span> <strong>DEFINICIÓN CLAVE</strong></div>
+          <div class="callout-body">${cleanContent}</div>
+        </div>`;
+      });
+
+      html = html.replace(/&gt; \*\*\[FORMULA\]\*\*\s*([^\n]+(\n&gt; [^\n]+)*)/gi, (match) => {
+        const cleanContent = match.replace(/&gt; \*\*\[FORMULA\]\*\*\s*/i, '').replace(/\n&gt; /g, '<br>');
+        return `<div class="study-callout study-callout-formula">
+          <div class="callout-header"><span class="callout-icon">📐</span> <strong>FÓRMULA / TEOREMA</strong></div>
+          <div class="callout-body formula-text">${cleanContent}</div>
+        </div>`;
+      });
+
+      html = html.replace(/&gt; \*\*\[IMPORTANTE\]\*\*\s*([^\n]+(\n&gt; [^\n]+)*)/gi, (match) => {
+        const cleanContent = match.replace(/&gt; \*\*\[IMPORTANTE\]\*\*\s*/i, '').replace(/\n&gt; /g, '<br>');
+        return `<div class="study-callout study-callout-alert">
+          <div class="callout-header"><span class="callout-icon">⚠️</span> <strong>¡OJO EN EXAMEN / EBAU!</strong></div>
+          <div class="callout-body">${cleanContent}</div>
+        </div>`;
+      });
+
+      html = html.replace(/&gt; \*\*\[EJEMPLO\]\*\*\s*([^\n]+(\n&gt; [^\n]+)*)/gi, (match) => {
+        const cleanContent = match.replace(/&gt; \*\*\[EJEMPLO\]\*\*\s*/i, '').replace(/\n&gt; /g, '<br>');
+        return `<div class="study-callout study-callout-example">
+          <div class="callout-header"><span class="callout-icon">📝</span> <strong>EJEMPLO PRÁCTICO</strong></div>
+          <div class="callout-body">${cleanContent}</div>
+        </div>`;
+      });
+
+      html = html.replace(/^&gt; (.*$)/gim, '<blockquote>$1</blockquote>');
+      html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
+      html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
+      html = html.replace(/^# (.*$)/gim, '<h1>$1</h1>');
+      html = html.replace(/^---$/gim, '<hr class="note-divider">');
+      html = html.replace(/\*\*\*(.*?)\*\*\*/g, '<strong><em>$1</em></strong>');
+      html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+      html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+      html = html.replace(/\$([^\$\n]+)\$/g, '<code class="math-inline">$1</code>');
+      html = html.replace(/`([^`\n]+)`/g, '<code class="code-inline">$1</code>');
+      html = html.replace(/^\- (.*$)/gim, '<li>$1</li>');
+      html = html.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
+
+      const paragraphs = html.split(/\n\n+/);
+      html = paragraphs.map(p => {
+        const trimmed = p.trim();
+        if (!trimmed) return '';
+        if (trimmed.startsWith('<h') || trimmed.startsWith('<div') || trimmed.startsWith('<hr') || trimmed.startsWith('<blockquote') || trimmed.startsWith('<ul>') || trimmed.startsWith('<ol>')) {
+          return trimmed;
+        }
+        return `<p>${trimmed.replace(/\n/g, '<br>')}</p>`;
+      }).join('\n');
+
+      return html;
+    }
+
+    insertSnippet(textarea, snippetType) {
+      if (!textarea) return;
+
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const selectedText = textarea.value.substring(start, end);
+      let insertion = '';
+
+      switch (snippetType) {
+        case 'bold':
+          insertion = `**${selectedText || 'texto en negrita'}**`;
+          break;
+        case 'italic':
+          insertion = `*${selectedText || 'texto en cursiva'}*`;
+          break;
+        case 'h2':
+          insertion = `\n## ${selectedText || 'Título de sección'}\n`;
+          break;
+        case 'h3':
+          insertion = `\n### ${selectedText || 'Subtítulo'}\n`;
+          break;
+        case 'list':
+          insertion = `\n- ${selectedText || 'Elemento de lista'}\n- Segundo elemento\n`;
+          break;
+        case 'definition':
+          insertion = `\n> **[DEFINICION]** ${selectedText || 'Enuncia aquí el concepto, ley o definición exacta.'}\n`;
+          break;
+        case 'formula':
+          insertion = `\n> **[FORMULA]** ${selectedText || '$E = m \\cdot c^2$'}\n`;
+          break;
+        case 'alert':
+          insertion = `\n> **[IMPORTANTE]** ${selectedText || 'Detalle clave que suelen preguntar en los exámenes o penalizar en corrección.'}\n`;
+          break;
+        case 'example':
+          insertion = `\n> **[EJEMPLO]** ${selectedText || 'Caso práctico o ejercicio típico de modelo EBAU/PAU.'}\n`;
+          break;
+        case 'math':
+          insertion = `$${selectedText || 'x^2 + y^2 = r^2'}$`;
+          break;
+        default:
+          return;
+      }
+
+      textarea.setRangeText(insertion, start, end, 'end');
+      textarea.focus();
+    }
+
+    downloadMarkdown(note) {
+      if (!note) return;
+      const subject = this.store.getSubjectById(note.subjectId);
+      const subjectName = subject ? subject.name : 'Asignatura';
+      const header = `# ${note.title}\n**Asignatura:** ${subjectName} | **Tema:** ${note.topic}\n**Fecha:** ${new Date(note.updatedAt).toLocaleDateString('es-ES')}\n\n---\n\n`;
+      const fullContent = header + note.content;
+
+      const blob = new Blob([fullContent], { type: 'text/markdown;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      const safeTitle = note.title.toLowerCase().replace(/[^a-z0-9]/g, '_').substring(0, 30);
+      link.download = `apuntes_${safeTitle}.md`;
+      link.click();
+      URL.revokeObjectURL(link.href);
+    }
+
+    printNote(note) {
+      if (!note) return;
+      const subject = this.store.getSubjectById(note.subjectId);
+      const subjectName = subject ? subject.name : 'Asignatura';
+      const renderedBody = this.renderToHtml(note.content);
+
+      const printWindow = window.open('', '_blank');
+      if (!printWindow) {
+        alert('Por favor, permite las ventanas emergentes para imprimir los apuntes.');
+        return;
+      }
+
+      const printHtml = [
+        '<!DOCTYPE html>',
+        '<html><head><meta charset="UTF-8">',
+        '<title>' + note.title + ' - BachiTrack</title>',
+        '<style>',
+        'body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; line-height: 1.6; color: #1f2937; max-width: 800px; margin: 40px auto; padding: 0 20px; }',
+        '.print-header { border-bottom: 2px solid #e5e7eb; padding-bottom: 16px; margin-bottom: 24px; }',
+        '.subject-badge { display: inline-block; background: #e0e7ff; color: #3730a3; padding: 4px 10px; border-radius: 6px; font-size: 13px; font-weight: 600; }',
+        'h1 { margin: 12px 0 6px 0; color: #111827; }',
+        '.meta { color: #6b7280; font-size: 14px; }',
+        '.study-callout { border-left: 4px solid #3b82f6; background: #f8fafc; padding: 12px 16px; margin: 16px 0; border-radius: 0 8px 8px 0; }',
+        '.study-callout-def { border-left-color: #f59e0b; background: #fffbeb; }',
+        '.study-callout-formula { border-left-color: #3b82f6; background: #eff6ff; font-family: monospace; }',
+        '.study-callout-alert { border-left-color: #ef4444; background: #fef2f2; }',
+        '.study-callout-example { border-left-color: #10b981; background: #ecfdf5; }',
+        '.callout-header { font-weight: bold; margin-bottom: 6px; font-size: 13px; }',
+        '.math-inline, .code-inline { background: #f3f4f6; padding: 2px 6px; border-radius: 4px; font-family: monospace; }',
+        'hr.note-divider { border: 0; border-top: 1px solid #e5e7eb; margin: 24px 0; }',
+        '@media print { body { margin: 20px; } }',
+        '</style></head><body>',
+        '<div class="print-header">',
+        '<span class="subject-badge">' + subjectName + '</span>',
+        '<h1>' + note.title + '</h1>',
+        '<div class="meta"><span>Tema: ' + (note.topic || 'General') + '</span> &bull; <span>Última actualización: ' + (new Date(note.updatedAt).toLocaleDateString('es-ES')) + '</span></div>',
+        '</div>',
+        '<div class="print-content">' + renderedBody + '</div>',
+        '</body></html>'
+      ].join('\n');
+
+      printWindow.document.write(printHtml);
+      printWindow.document.close();
+      printWindow.focus();
+      setTimeout(() => {
+        try {
+          printWindow.print();
+        } catch (e) {
+          console.log('Ventana de impresión lista');
+        }
+      }, 250);
+    }
+  }
+
+  /* ==========================================================================
+     4. CONTROLADOR PRINCIPAL DE LA APLICACIÓN (App)
+     ========================================================================== */
+
+  class App {
+    constructor() {
+      this.notesEditor = new NotesEditor(store);
+      this.currentView = 'dashboard';
+      this.tasksViewMode = 'kanban';
+      this.selectedNoteId = null;
+      this.editingSubtasks = [];
+
+      this.init();
+    }
+
+    init() {
+      this.applyTheme(store.getSettings().theme);
+      this.renderStudentProfile();
+      this.initNavigation();
+      this.initHeaderButtons();
+      this.initModals();
+      this.initColorAndIconPickers();
+      this.initTasksEventListeners();
+      this.initExamsEventListeners();
+      this.initNotesEventListeners();
+      this.initPauCalculator();
+      this.initSettings();
+
+      this.switchView('dashboard');
+
+      window.addEventListener('bachitrack-data-changed', () => {
+        this.refreshCurrentView();
+        this.updateBadges();
+        this.renderStudentProfile();
+      });
+
+      this.updateBadges();
+
+      setInterval(() => {
+        if (this.currentView === 'dashboard') {
+          this.renderLiveClass();
+        }
+      }, 60000);
+    }
+
+    applyTheme(theme) {
+      const root = document.documentElement;
+      const themeIcon = document.getElementById('themeIcon');
+      const themeText = document.getElementById('themeText');
+
+      if (theme === 'light') {
+        root.setAttribute('data-theme', 'light');
+        if (themeIcon) themeIcon.textContent = '☀️';
+        if (themeText) themeText.textContent = 'Claro';
+      } else {
+        root.setAttribute('data-theme', 'dark');
+        if (themeIcon) themeIcon.textContent = '🌙';
+        if (themeText) themeText.textContent = 'Oscuro';
+      }
+    }
+
+    toggleTheme() {
+      const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      store.updateSettings({ theme: newTheme });
+      this.applyTheme(newTheme);
+      this.showToast(`Modo ${newTheme === 'light' ? 'claro' : 'oscuro'} activado`, 'info');
+    }
+
+    renderStudentProfile() {
+      const settings = store.getSettings();
+      const nameEl = document.getElementById('sidebarStudentName');
+      const courseEl = document.getElementById('sidebarStudentCourse');
+      const avatarEl = document.getElementById('studentAvatar');
+
+      if (nameEl) nameEl.textContent = settings.studentName || 'Estudiante';
+      if (courseEl) courseEl.textContent = `${settings.bachilleratoCourse} • ${settings.modality}`;
+      if (avatarEl) {
+        const initials = (settings.studentName || 'BT')
+          .split(' ')
+          .filter(Boolean)
+          .map(w => w[0])
+          .slice(0, 2)
+          .join('')
+          .toUpperCase();
+        avatarEl.textContent = initials || 'BT';
+      }
+    }
+
+    updateBadges() {
+      const pendingTasks = store.getTasks().filter(t => t.status !== 'completada').length;
+      const tasksBadge = document.getElementById('tasksNavBadge');
+      if (tasksBadge) {
+        tasksBadge.textContent = pendingTasks;
+        tasksBadge.style.display = pendingTasks > 0 ? 'inline-block' : 'none';
+      }
+
+      const todayStr = new Date().toISOString().split('T')[0];
+      const upcomingExams = store.getExams().filter(e => e.date >= todayStr).length;
+      const examsBadge = document.getElementById('examsNavBadge');
+      if (examsBadge) {
+        examsBadge.textContent = upcomingExams;
+        examsBadge.style.display = upcomingExams > 0 ? 'inline-block' : 'none';
+      }
+    }
+
+    initNavigation() {
+      const navItems = document.querySelectorAll('.sidebar-nav .nav-item');
+      navItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+          e.preventDefault();
+          const viewName = item.dataset.view;
+          this.switchView(viewName);
+
+          const sidebar = document.getElementById('appSidebar');
+          if (sidebar) sidebar.classList.remove('mobile-open');
+        });
+      });
+
+      const mobileBtn = document.getElementById('mobileMenuBtn');
+      const sidebar = document.getElementById('appSidebar');
+      if (mobileBtn && sidebar) {
+        mobileBtn.addEventListener('click', () => {
+          sidebar.classList.toggle('mobile-open');
+        });
+      }
+
+      const themeBtn = document.getElementById('themeToggleBtn');
+      if (themeBtn) {
+        themeBtn.addEventListener('click', () => this.toggleTheme());
+      }
+
+      document.getElementById('linkToFullSchedule')?.addEventListener('click', () => this.switchView('schedule'));
+      document.getElementById('linkToTasks')?.addEventListener('click', () => this.switchView('tasks'));
+      document.getElementById('linkToExams')?.addEventListener('click', () => this.switchView('exams'));
+    }
+
+    switchView(viewName) {
+      this.currentView = viewName;
+
+      document.querySelectorAll('.sidebar-nav .nav-item').forEach(item => {
+        item.classList.toggle('active', item.dataset.view === viewName);
+      });
+
+      document.querySelectorAll('.view-section').forEach(sec => {
+        sec.classList.remove('active-view');
+      });
+
+      const targetSection = document.getElementById(`view-${viewName}`);
+      if (targetSection) targetSection.classList.add('active-view');
+
+      const viewTitles = {
+        dashboard: { title: 'Dashboard', subtitle: 'Resumen de clases, tareas y exámenes' },
+        schedule: { title: 'Horario Semanal', subtitle: 'Cuadrícula lectiva de Lunes a Viernes' },
+        tasks: { title: 'Tareas y Entregas', subtitle: 'Control de trabajos, ejercicios y fechas límite' },
+        exams: { title: 'Exámenes y Calificaciones', subtitle: 'Calendario de pruebas y seguimiento de notas' },
+        notes: { title: 'Cuaderno de Apuntes', subtitle: 'Apuntes organizados con fórmulas y definiciones' },
+        subjects: { title: 'Mis Asignaturas', subtitle: 'Aulas, profesores y ponderaciones' },
+        pau: { title: 'Calculadora EBAU / PAU', subtitle: 'Simulador oficial de nota de admisión sobre 14 puntos' }
+      };
+
+      const header = viewTitles[viewName] || { title: 'BachiTrack', subtitle: '' };
+      const titleEl = document.getElementById('currentViewTitle');
+      const subEl = document.getElementById('currentViewSubtitle');
+      if (titleEl) titleEl.textContent = header.title;
+      if (subEl) subEl.textContent = header.subtitle;
+
+      this.refreshCurrentView();
+    }
+
+    refreshCurrentView() {
+      switch (this.currentView) {
+        case 'dashboard':
+          this.renderDashboard();
+          break;
+        case 'schedule':
+          this.renderWeeklyTimetable();
+          break;
+        case 'tasks':
+          this.populateSubjectSelects();
+          this.renderTasks();
+          break;
+        case 'exams':
+          this.populateSubjectSelects();
+          this.renderExams();
+          break;
+        case 'notes':
+          this.populateSubjectSelects();
+          this.renderNotesExplorer();
+          break;
+        case 'subjects':
+          this.renderSubjects();
+          break;
+        case 'pau':
+          this.calculatePauScore();
+          break;
+      }
+    }
+
+    initHeaderButtons() {
+      document.getElementById('quickNewTaskBtn')?.addEventListener('click', () => this.openTaskModal());
+      document.getElementById('quickNewExamBtn')?.addEventListener('click', () => this.openExamModal());
+      document.getElementById('quickNewNoteBtn')?.addEventListener('click', () => this.openNoteModal());
+
+      document.getElementById('addNewSlotBtn')?.addEventListener('click', () => this.openSlotModal());
+      document.getElementById('addNewTaskBtn')?.addEventListener('click', () => this.openTaskModal());
+      document.getElementById('addNewExamBtn')?.addEventListener('click', () => this.openExamModal());
+      document.getElementById('addNewNoteBtn')?.addEventListener('click', () => this.openNoteModal());
+      document.getElementById('addNewSubjectBtn')?.addEventListener('click', () => this.openSubjectModal());
+    }
+
+    /* --- DASHBOARD --- */
+    renderDashboard() {
+      const avgGrade = store.getOverallAverageGrade();
+      const metricGradeEl = document.getElementById('metricAverageGrade');
+      if (metricGradeEl) metricGradeEl.textContent = avgGrade !== null ? avgGrade.toFixed(2) : 'Sin notas';
+
+      const tasks = store.getTasks();
+      const pendingTasks = tasks.filter(t => t.status !== 'completada').length;
+      const metricTasksEl = document.getElementById('metricPendingTasks');
+      if (metricTasksEl) metricTasksEl.textContent = pendingTasks;
+
+      const todayStr = new Date().toISOString().split('T')[0];
+      const upcomingExams = store.getExams().filter(e => e.date >= todayStr).length;
+      const metricExamsEl = document.getElementById('metricUpcomingExams');
+      if (metricExamsEl) metricExamsEl.textContent = upcomingExams;
+
+      const metricSubjectsEl = document.getElementById('metricTotalSubjects');
+      if (metricSubjectsEl) metricSubjectsEl.textContent = store.getSubjects().length;
+
+      this.renderLiveClass();
+      this.renderTodaySchedule();
+      this.renderDashboardUpcomingTasks();
+      this.renderDashboardUpcomingExams();
+    }
+
+    renderLiveClass() {
+      const titleEl = document.getElementById('currentClassTitle');
+      const detailsEl = document.getElementById('currentClassDetails');
+      const iconEl = document.getElementById('currentClassIcon');
+      if (!titleEl || !detailsEl) return;
+
+      const now = new Date();
+      const currentDay = now.getDay();
+      const currentHour = now.getHours().toString().padStart(2, '0');
+      const currentMin = now.getMinutes().toString().padStart(2, '0');
+      const currentTimeStr = `${currentHour}:${currentMin}`;
+
+      if (currentDay < 1 || currentDay > 5) {
+        titleEl.textContent = 'Fin de semana libre 🎉';
+        detailsEl.textContent = 'No hay clases programadas hoy. ¡Aprovecha para descansar o repasar!';
+        if (iconEl) iconEl.textContent = '🛋️';
+        return;
+      }
+
+      const todaySlots = store.getSchedule()
+        .filter(s => s.day === currentDay)
+        .sort((a, b) => a.startTime.localeCompare(b.startTime));
+
+      if (todaySlots.length === 0) {
+        titleEl.textContent = 'Sin clases hoy';
+        detailsEl.textContent = 'No tienes ninguna franja configurada en tu horario para hoy.';
+        if (iconEl) iconEl.textContent = '📅';
+        return;
+      }
+
+      const activeSlot = todaySlots.find(s => currentTimeStr >= s.startTime && currentTimeStr < s.endTime);
+
+      if (activeSlot) {
+        const subject = store.getSubjectById(activeSlot.subjectId);
+        titleEl.textContent = `En clase: ${subject ? subject.name : 'Asignatura'}`;
+        detailsEl.textContent = `Hasta las ${activeSlot.endTime} • Aula: ${activeSlot.room || (subject ? subject.room : 'Por definir')}`;
+        if (iconEl) iconEl.textContent = subject ? subject.icon : '📖';
+        return;
+      }
+
+      const nextSlot = todaySlots.find(s => s.startTime > currentTimeStr);
+
+      if (nextSlot) {
+        const subject = store.getSubjectById(nextSlot.subjectId);
+        titleEl.textContent = `Próxima: ${subject ? subject.name : 'Asignatura'} a las ${nextSlot.startTime}`;
+        detailsEl.textContent = `Duración: ${nextSlot.startTime} - ${nextSlot.endTime} • Aula: ${nextSlot.room || (subject ? subject.room : '-')}`;
+        if (iconEl) iconEl.textContent = subject ? subject.icon : '⏰';
+        return;
+      }
+
+      titleEl.textContent = 'Jornada escolar terminada ✅';
+      detailsEl.textContent = 'Has completado todas las clases programadas para hoy.';
+      if (iconEl) iconEl.textContent = '🌟';
+    }
+
+    renderTodaySchedule() {
+      const container = document.getElementById('dashboardTodayList');
+      const dayNameEl = document.getElementById('dashboardTodayDayName');
+      if (!container) return;
+
+      const dayNames = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+      const now = new Date();
+      const currentDay = now.getDay();
+      if (dayNameEl) dayNameEl.textContent = dayNames[currentDay] || 'Hoy';
+
+      if (currentDay < 1 || currentDay > 5) {
+        container.innerHTML = `<p class="text-muted" style="padding: 12px; text-align: center;">Es fin de semana. No hay clases programadas para hoy.</p>`;
+        return;
+      }
+
+      const currentHour = now.getHours().toString().padStart(2, '0');
+      const currentMin = now.getMinutes().toString().padStart(2, '0');
+      const currentTimeStr = `${currentHour}:${currentMin}`;
+
+      const slots = store.getSchedule()
+        .filter(s => s.day === currentDay)
+        .sort((a, b) => a.startTime.localeCompare(b.startTime));
+
+      if (slots.length === 0) {
+        container.innerHTML = `<p class="text-muted" style="padding: 12px; text-align: center;">No hay clases programadas para hoy.</p>`;
+        return;
+      }
+
+      container.innerHTML = slots.map(slot => {
+        const subject = store.getSubjectById(slot.subjectId);
+        const isCurrent = currentTimeStr >= slot.startTime && currentTimeStr < slot.endTime;
+        const isPast = currentTimeStr >= slot.endTime;
+
+        return `
+          <div class="schedule-row-item ${isCurrent ? 'is-current' : ''} ${isPast ? 'is-past' : ''}" style="border-left-color: ${subject ? subject.color : 'var(--primary)'}">
+            <div class="time-badge">${slot.startTime} - ${slot.endTime}</div>
+            <div class="class-details">
+              <div class="class-title">${subject ? subject.icon : '📚'} ${subject ? subject.name : 'Asignatura'}</div>
+              <div class="class-room">Aula: ${slot.room || (subject ? subject.room : 'General')}</div>
+            </div>
+            ${isCurrent ? '<span class="live-badge"><span class="live-dot"></span> EN VIVO</span>' : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    renderDashboardUpcomingTasks() {
+      const container = document.getElementById('dashboardUpcomingTasksList');
+      if (!container) return;
+
+      const tasks = store.getTasks()
+        .filter(t => t.status !== 'completada')
+        .sort((a, b) => `${a.dueDate} ${a.dueTime}`.localeCompare(`${b.dueDate} ${b.dueTime}`))
+        .slice(0, 4);
+
+      if (tasks.length === 0) {
+        container.innerHTML = `<p class="text-muted" style="padding: 12px; text-align: center;">¡Genial! No tienes tareas pendientes para los próximos días.</p>`;
+        return;
+      }
+
+      container.innerHTML = tasks.map(task => {
+        const subject = store.getSubjectById(task.subjectId);
+        const countdown = this.getTaskCountdownLabel(task.dueDate);
+
+        return `
+          <div class="schedule-row-item" style="border-left-color: ${subject ? subject.color : 'var(--primary)'}">
+            <div class="class-details" style="margin-left: 0;">
+              <div class="class-title">${task.title}</div>
+              <div class="class-room">${subject ? subject.icon : ''} ${subject ? subject.name : ''}</div>
+            </div>
+            <div style="text-align: right;">
+              <div class="due-countdown ${countdown.className}">${countdown.text}</div>
+              <div style="font-size: 0.72rem; color: var(--text-muted);">${task.dueDate} &bull; ${task.dueTime}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    renderDashboardUpcomingExams() {
+      const container = document.getElementById('dashboardUpcomingExamsList');
+      if (!container) return;
+
+      const todayStr = new Date().toISOString().split('T')[0];
+      const exams = store.getExams()
+        .filter(e => e.date >= todayStr)
+        .sort((a, b) => a.date.localeCompare(b.date))
+        .slice(0, 4);
+
+      if (exams.length === 0) {
+        container.innerHTML = `<p class="text-muted" style="padding: 12px; text-align: center;">No tienes exámenes registrados próximamente.</p>`;
+        return;
+      }
+
+      container.innerHTML = exams.map(exam => {
+        const subject = store.getSubjectById(exam.subjectId);
+        const countdown = this.getExamCountdownLabel(exam.date);
+
+        return `
+          <div class="schedule-row-item" style="border-left-color: ${subject ? subject.color : 'var(--danger)'}">
+            <div class="class-details" style="margin-left: 0;">
+              <div class="class-title">${exam.title}</div>
+              <div class="class-room">${subject ? subject.icon : ''} ${subject ? subject.name : ''} &bull; Peso: ${exam.weight}%</div>
+            </div>
+            <div style="text-align: right;">
+              <span class="exam-countdown-pill ${countdown.className}">${countdown.text}</span>
+              <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 4px;">${exam.date}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    /* --- HORARIO SEMANAL --- */
+    renderWeeklyTimetable() {
+      const grid = document.getElementById('weeklyTimetableGrid');
+      if (!grid) return;
+
+      const dayNames = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
+      const currentDay = new Date().getDay();
+
+      const timePeriods = [
+        { start: '08:00', end: '08:55' },
+        { start: '08:55', end: '09:50' },
+        { start: '09:50', end: '10:45' },
+        { isBreak: true, start: '10:45', end: '11:15', label: '☕ Recreo' },
+        { start: '11:15', end: '12:10' },
+        { start: '12:10', end: '13:05' },
+        { start: '13:05', end: '14:00' }
+      ];
+
+      let html = '';
+      html += `<div class="timetable-header-cell">Hora</div>`;
+      dayNames.forEach((name, idx) => {
+        const dayNum = idx + 1;
+        const isToday = currentDay === dayNum;
+        html += `<div class="timetable-header-cell ${isToday ? 'is-today' : ''}">${name} ${isToday ? '(Hoy)' : ''}</div>`;
+      });
+
+      const schedule = store.getSchedule();
+
+      timePeriods.forEach(period => {
+        html += `<div class="time-column-cell">${period.start}<br>${period.end}</div>`;
+
+        if (period.isBreak) {
+          for (let d = 1; d <= 5; d++) {
+            html += `<div class="timetable-slot-cell is-recreo">${period.label}</div>`;
+          }
+          return;
+        }
+
+        for (let day = 1; day <= 5; day++) {
+          const slot = schedule.find(s => s.day === day && s.startTime === period.start);
+
+          if (slot) {
+            const subject = store.getSubjectById(slot.subjectId);
+            html += `
+              <div class="timetable-slot-cell" data-slot-id="${slot.id}">
+                <div class="slot-card" style="background: ${subject ? subject.color : '#3b82f6'};">
+                  <div class="slot-subject-title">
+                    <span>${subject ? subject.icon : '📚'}</span>
+                    <span>${subject ? subject.name : 'Asignatura'}</span>
+                  </div>
+                  <div class="slot-meta">
+                    <span>${slot.room || (subject ? subject.room : 'Aula')}</span>
+                    <span>${subject ? subject.code : ''}</span>
+                  </div>
+                </div>
+              </div>
+            `;
+          } else {
+            html += `<div class="timetable-slot-cell" data-day="${day}" data-start="${period.start}" data-end="${period.end}"></div>`;
+          }
+        }
+      });
+
+      grid.innerHTML = html;
+
+      grid.querySelectorAll('.timetable-slot-cell').forEach(cell => {
+        cell.addEventListener('click', () => {
+          const slotId = cell.dataset.slotId;
+          if (slotId) {
+            this.openSlotModal(slotId);
+          } else if (cell.dataset.day) {
+            this.openSlotModal(null, {
+              day: cell.dataset.day,
+              startTime: cell.dataset.start,
+              endTime: cell.dataset.end
+            });
+          }
+        });
+      });
+    }
+
+    /* --- TAREAS Y ENTREGAS --- */
+    initTasksEventListeners() {
+      const searchInput = document.getElementById('tasksSearchInput');
+      const subjectFilter = document.getElementById('tasksSubjectFilter');
+      const priorityFilter = document.getElementById('tasksPriorityFilter');
+
+      searchInput?.addEventListener('input', () => this.renderTasks());
+      subjectFilter?.addEventListener('change', () => this.renderTasks());
+      priorityFilter?.addEventListener('change', () => this.renderTasks());
+
+      document.getElementById('tasksViewKanbanBtn')?.addEventListener('click', () => {
+        this.tasksViewMode = 'kanban';
+        document.getElementById('tasksViewKanbanBtn').classList.add('active');
+        document.getElementById('tasksViewListBtn').classList.remove('active');
+        document.getElementById('tasksKanbanContainer').style.display = 'grid';
+        document.getElementById('tasksListContainer').style.display = 'none';
+        this.renderTasks();
+      });
+
+      document.getElementById('tasksViewListBtn')?.addEventListener('click', () => {
+        this.tasksViewMode = 'list';
+        document.getElementById('tasksViewListBtn').classList.add('active');
+        document.getElementById('tasksViewKanbanBtn').classList.remove('active');
+        document.getElementById('tasksKanbanContainer').style.display = 'none';
+        document.getElementById('tasksListContainer').style.display = 'flex';
+        this.renderTasks();
+      });
+    }
+
+    renderTasks() {
+      const searchTerm = (document.getElementById('tasksSearchInput')?.value || '').toLowerCase().trim();
+      const subjectId = document.getElementById('tasksSubjectFilter')?.value || 'all';
+      const priority = document.getElementById('tasksPriorityFilter')?.value || 'all';
+
+      let tasks = store.getTasks();
+
+      if (searchTerm) {
+        tasks = tasks.filter(t => t.title.toLowerCase().includes(searchTerm) || (t.description && t.description.toLowerCase().includes(searchTerm)));
+      }
+      if (subjectId !== 'all') {
+        tasks = tasks.filter(t => t.subjectId === subjectId);
+      }
+      if (priority !== 'all') {
+        tasks = tasks.filter(t => t.priority === priority);
+      }
+
+      if (this.tasksViewMode === 'kanban') {
+        this.renderKanbanTasks(tasks);
+      } else {
+        this.renderListTasks(tasks);
+      }
+    }
+
+    renderKanbanTasks(tasks) {
+      const pendingTasks = tasks.filter(t => t.status === 'pendiente');
+      const inProgressTasks = tasks.filter(t => t.status === 'en_progreso');
+      const completedTasks = tasks.filter(t => t.status === 'completada');
+
+      const pendingCol = document.getElementById('colPendingCards');
+      const inProgressCol = document.getElementById('colInProgressCards');
+      const completedCol = document.getElementById('colCompletedCards');
+
+      document.getElementById('countPending').textContent = pendingTasks.length;
+      document.getElementById('countInProgress').textContent = inProgressTasks.length;
+      document.getElementById('countCompleted').textContent = completedTasks.length;
+
+      if (pendingCol) pendingCol.innerHTML = pendingTasks.map(t => this.createTaskCardHtml(t)).join('') || '<p class="text-muted" style="text-align:center; padding:16px;">Sin tareas pendientes</p>';
+      if (inProgressCol) inProgressCol.innerHTML = inProgressTasks.map(t => this.createTaskCardHtml(t)).join('') || '<p class="text-muted" style="text-align:center; padding:16px;">Ninguna en curso</p>';
+      if (completedCol) completedCol.innerHTML = completedTasks.map(t => this.createTaskCardHtml(t)).join('') || '<p class="text-muted" style="text-align:center; padding:16px;">No hay tareas completadas</p>';
+
+      this.attachTaskCardListeners();
+    }
+
+    renderListTasks(tasks) {
+      const listContainer = document.getElementById('tasksListContainer');
+      if (!listContainer) return;
+
+      if (tasks.length === 0) {
+        listContainer.innerHTML = `<p class="text-muted" style="padding: 24px; text-align: center;">No se encontraron tareas con los filtros seleccionados.</p>`;
+        return;
+      }
+
+      listContainer.innerHTML = tasks.map(task => {
+        const subject = store.getSubjectById(task.subjectId);
+        const countdown = this.getTaskCountdownLabel(task.dueDate);
+        const isDone = task.status === 'completada';
+
+        return `
+          <div class="schedule-row-item ${isDone ? 'is-past' : ''}" style="border-left-color: ${subject ? subject.color : 'var(--primary)'}">
+            <input type="checkbox" class="task-checkbox" data-task-id="${task.id}" ${isDone ? 'checked' : ''} style="width: 18px; height: 18px; cursor: pointer; accent-color: var(--success);">
+            <div class="class-details">
+              <div class="class-title" style="${isDone ? 'text-decoration: line-through;' : ''}">${task.title}</div>
+              <div class="class-room">${subject ? subject.icon : ''} ${subject ? subject.name : ''} &bull; Prioridad: <span class="task-priority-badge priority-${task.priority}">${task.priority}</span></div>
+            </div>
+            <div style="text-align: right; margin-right: 12px;">
+              <span class="due-countdown ${countdown.className}">${countdown.text}</span>
+              <div style="font-size: 0.72rem; color: var(--text-muted);">${task.dueDate} &bull; ${task.dueTime}</div>
+            </div>
+            <div class="task-actions">
+              <button class="icon-btn edit-task-btn" data-task-id="${task.id}" title="Editar">✏️</button>
+              <button class="icon-btn delete-task-btn" data-task-id="${task.id}" title="Eliminar">🗑️</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      this.attachTaskCardListeners();
+    }
+
+    createTaskCardHtml(task) {
+      const subject = store.getSubjectById(task.subjectId);
+      const countdown = this.getTaskCountdownLabel(task.dueDate);
+      const isCompleted = task.status === 'completada';
+
+      let subtasksHtml = '';
+      if (task.subtasks && task.subtasks.length > 0) {
+        const doneCount = task.subtasks.filter(st => st.completed).length;
+        const totalCount = task.subtasks.length;
+        const pct = Math.round((doneCount / totalCount) * 100);
+
+        subtasksHtml = `
+          <div class="task-subtasks-preview">
+            <div class="subtask-progress-bar">
+              <div class="subtask-progress-fill" style="width: ${pct}%;"></div>
+            </div>
+            <div class="subtask-progress-text">${doneCount}/${totalCount} pasos completados (${pct}%)</div>
+          </div>
+        `;
+      }
+
+      return `
+        <div class="task-card ${isCompleted ? 'is-completed' : ''}" data-task-id="${task.id}">
+          <div class="task-header">
+            <span class="task-subject-tag" style="background: ${subject ? subject.color : '#3b82f6'};">
+              ${subject ? subject.icon : '📚'} ${subject ? subject.code : 'GEN'}
+            </span>
+            <span class="task-priority-badge priority-${task.priority}">
+              ${task.priority}
+            </span>
+          </div>
+
+          <h4 class="task-title">${task.title}</h4>
+          ${task.description ? `<p class="task-desc">${task.description}</p>` : ''}
+          ${subtasksHtml}
+
+          <div class="task-footer">
+            <span class="due-countdown ${countdown.className}">
+              🕒 ${countdown.text}
+            </span>
+            <div class="task-actions">
+              <button class="icon-btn toggle-task-btn" data-task-id="${task.id}" title="${isCompleted ? 'Marcar pendiente' : 'Marcar completada'}">
+                ${isCompleted ? '↩️' : '✅'}
+              </button>
+              <button class="icon-btn edit-task-btn" data-task-id="${task.id}" title="Editar">✏️</button>
+              <button class="icon-btn delete-task-btn" data-task-id="${task.id}" title="Eliminar">🗑️</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    attachTaskCardListeners() {
+      document.querySelectorAll('.toggle-task-btn, .task-checkbox').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const taskId = btn.dataset.taskId;
+          const updated = store.toggleTaskStatus(taskId);
+          if (updated) {
+            this.showToast(updated.status === 'completada' ? '¡Tarea marcada como completada! 🎉' : 'Tarea reabierta como pendiente', 'success');
+          }
+        });
+      });
+
+      document.querySelectorAll('.edit-task-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          this.openTaskModal(btn.dataset.taskId);
+        });
+      });
+
+      document.querySelectorAll('.delete-task-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (confirm('¿Seguro que deseas eliminar esta tarea?')) {
+            store.deleteTask(btn.dataset.taskId);
+            this.showToast('Tarea eliminada', 'info');
+          }
+        });
+      });
+
+      document.querySelectorAll('.task-card').forEach(card => {
+        card.addEventListener('click', () => {
+          this.openTaskModal(card.dataset.taskId);
+        });
+      });
+    }
+
+    getTaskCountdownLabel(dueDateStr) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const [year, month, day] = dueDateStr.split('-').map(Number);
+      const due = new Date(year, month - 1, day);
+      due.setHours(0, 0, 0, 0);
+
+      const diffMs = due - today;
+      const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
+
+      if (diffDays < 0) {
+        return { text: `Atrasada (${Math.abs(diffDays)}d)`, className: 'is-overdue' };
+      } else if (diffDays === 0) {
+        return { text: '¡Vence hoy!', className: 'is-today' };
+      } else if (diffDays === 1) {
+        return { text: 'Vence mañana', className: 'is-today' };
+      } else if (diffDays <= 3) {
+        return { text: `Faltan ${diffDays} días`, className: 'is-upcoming' };
+      } else {
+        return { text: `${dueDateStr}`, className: 'is-upcoming' };
+      }
+    }
+
+    /* --- EXÁMENES Y CALIFICACIONES --- */
+    initExamsEventListeners() {
+      document.getElementById('examsSubjectFilter')?.addEventListener('change', () => this.renderExams());
+      document.getElementById('examsStatusFilter')?.addEventListener('change', () => this.renderExams());
+    }
+
+    renderExams() {
+      const subjectId = document.getElementById('examsSubjectFilter')?.value || 'all';
+      const status = document.getElementById('examsStatusFilter')?.value || 'all';
+      const todayStr = new Date().toISOString().split('T')[0];
+
+      const averagesStrip = document.getElementById('examsAveragesStrip');
+      if (averagesStrip) {
+        const subjects = store.getSubjects();
+        averagesStrip.innerHTML = subjects.map(s => {
+          const avg = store.getSubjectAverageGrade(s.id);
+          const colorClass = avg >= 8.5 ? 'grade-high' : avg >= 5 ? 'grade-pass' : 'grade-fail';
+
+          return `
+            <div style="background: var(--bg-card-muted); padding: 12px 14px; border-radius: var(--radius-md); border-left: 4px solid ${s.color};">
+              <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">${s.name}</div>
+              <div class="grade-display ${colorClass}" style="margin-top: 4px; font-size: 1.4rem;">
+                ${avg !== null ? avg.toFixed(2) : '<span style="font-size: 0.85rem; color: var(--text-muted);">Sin notas</span>'}
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      let exams = store.getExams();
+
+      if (subjectId !== 'all') {
+        exams = exams.filter(e => e.subjectId === subjectId);
+      }
+
+      if (status === 'upcoming') {
+        exams = exams.filter(e => e.date >= todayStr);
+      } else if (status === 'graded') {
+        exams = exams.filter(e => e.grade !== null);
+      } else if (status === 'ungraded') {
+        exams = exams.filter(e => e.grade === null);
+      }
+
+      exams.sort((a, b) => {
+        if (a.date >= todayStr && b.date < todayStr) return -1;
+        if (a.date < todayStr && b.date >= todayStr) return 1;
+        return a.date.localeCompare(b.date);
+      });
+
+      const grid = document.getElementById('examsGridContainer');
+      if (!grid) return;
+
+      if (exams.length === 0) {
+        grid.innerHTML = `<p class="text-muted" style="padding: 24px; text-align: center; grid-column: 1 / -1;">No hay exámenes que coincidan con el filtro.</p>`;
+        return;
+      }
+
+      grid.innerHTML = exams.map(exam => {
+        const subject = store.getSubjectById(exam.subjectId);
+        const countdown = this.getExamCountdownLabel(exam.date);
+        const hasGrade = exam.grade !== null && exam.grade !== undefined;
+
+        return `
+          <div class="exam-card" data-exam-id="${exam.id}">
+            <div>
+              <div class="exam-header">
+                <span class="task-subject-tag" style="background: ${subject ? subject.color : '#3b82f6'};">
+                  ${subject ? subject.icon : '📝'} ${subject ? subject.name : 'Asignatura'}
+                </span>
+                <span class="exam-countdown-pill ${countdown.className}">
+                  ${countdown.text}
+                </span>
+              </div>
+
+              <h3 class="exam-title">${exam.title}</h3>
+
+              <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 10px;">
+                📅 ${exam.date} &bull; ⏰ ${exam.time} &bull; Peso trimestral: <strong>${exam.weight}%</strong>
+              </div>
+
+              <div class="exam-topics">
+                <strong>📖 Temario:</strong><br>
+                ${exam.topics || 'Temas del trimestre'}
+              </div>
+            </div>
+
+            <div>
+              <div class="exam-grade-box">
+                <span style="font-size: 0.85rem; color: var(--text-secondary);">Calificación obtenida:</span>
+                <span class="grade-display ${hasGrade ? (exam.grade >= 8.5 ? 'grade-high' : exam.grade >= 5 ? 'grade-pass' : 'grade-fail') : ''}">
+                  ${hasGrade ? exam.grade.toFixed(2) : '<span style="font-size: 0.85rem; color: var(--text-muted); font-weight: normal;">Pendiente</span>'}
+                </span>
+              </div>
+
+              ${exam.notes ? `<p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 12px;">ℹ️ ${exam.notes}</p>` : ''}
+
+              <div style="display: flex; justify-content: flex-end; gap: 8px;">
+                <button class="btn btn-secondary btn-sm edit-exam-btn" data-exam-id="${exam.id}">✏️ Editar / Nota</button>
+                <button class="btn btn-danger btn-sm delete-exam-btn" data-exam-id="${exam.id}">🗑️</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      grid.querySelectorAll('.edit-exam-btn').forEach(btn => {
+        btn.addEventListener('click', () => this.openExamModal(btn.dataset.examId));
+      });
+
+      grid.querySelectorAll('.delete-exam-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          if (confirm('¿Seguro que deseas eliminar este examen?')) {
+            store.deleteExam(btn.dataset.examId);
+            this.showToast('Examen eliminado', 'info');
+          }
+        });
+      });
+    }
+
+    getExamCountdownLabel(dateStr) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const [year, month, day] = dateStr.split('-').map(Number);
+      const examDate = new Date(year, month - 1, day);
+      examDate.setHours(0, 0, 0, 0);
+
+      const diffDays = Math.round((examDate - today) / (1000 * 60 * 60 * 24));
+
+      if (diffDays < 0) {
+        return { text: `Realizado hace ${Math.abs(diffDays)}d`, className: 'passed' };
+      } else if (diffDays === 0) {
+        return { text: '¡HOY!', className: 'urgent' };
+      } else if (diffDays === 1) {
+        return { text: '¡Mañana!', className: 'urgent' };
+      } else if (diffDays <= 7) {
+        return { text: `Faltan ${diffDays} días`, className: 'soon' };
+      } else {
+        return { text: `En ${diffDays} días`, className: 'passed' };
+      }
+    }
+
+    /* --- APUNTES --- */
+    initNotesEventListeners() {
+      const searchInput = document.getElementById('notesSearchInput');
+      const subjectFilter = document.getElementById('notesSubjectFilter');
+
+      searchInput?.addEventListener('input', () => this.renderNotesExplorer());
+      subjectFilter?.addEventListener('change', () => this.renderNotesExplorer());
+
+      document.getElementById('printNoteBtn')?.addEventListener('click', () => {
+        const note = store.getNoteById(this.selectedNoteId);
+        if (note) this.notesEditor.printNote(note);
+      });
+
+      document.getElementById('exportNoteMdBtn')?.addEventListener('click', () => {
+        const note = store.getNoteById(this.selectedNoteId);
+        if (note) this.notesEditor.downloadMarkdown(note);
+      });
+
+      document.getElementById('editCurrentNoteBtn')?.addEventListener('click', () => {
+        if (this.selectedNoteId) {
+          this.openNoteModal(this.selectedNoteId);
+        }
+      });
+
+      document.getElementById('deleteCurrentNoteBtn')?.addEventListener('click', () => {
+        if (this.selectedNoteId && confirm('¿Deseas eliminar este apunte?')) {
+          store.deleteNote(this.selectedNoteId);
+          this.selectedNoteId = null;
+          this.showToast('Apunte eliminado', 'info');
+          this.renderNotesExplorer();
+        }
+      });
+
+      document.querySelectorAll('.note-editor-toolbar .toolbar-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const textarea = document.getElementById('noteContentInput');
+          const snippet = btn.dataset.snippet;
+          this.notesEditor.insertSnippet(textarea, snippet);
+        });
+      });
+    }
+
+    renderNotesExplorer() {
+      const searchTerm = (document.getElementById('notesSearchInput')?.value || '').toLowerCase().trim();
+      const subjectId = document.getElementById('notesSubjectFilter')?.value || 'all';
+
+      let notes = store.getNotes();
+
+      if (searchTerm) {
+        notes = notes.filter(n =>
+          n.title.toLowerCase().includes(searchTerm) ||
+          n.content.toLowerCase().includes(searchTerm) ||
+          n.topic.toLowerCase().includes(searchTerm) ||
+          (n.tags && n.tags.some(t => t.toLowerCase().includes(searchTerm)))
+        );
+      }
+
+      if (subjectId !== 'all') {
+        notes = notes.filter(n => n.subjectId === subjectId);
+      }
+
+      const listContainer = document.getElementById('notesListContainer');
+      if (!listContainer) return;
+
+      if (notes.length === 0) {
+        listContainer.innerHTML = `<p class="text-muted" style="padding: 16px; text-align: center;">No hay apuntes encontrados.</p>`;
+        this.renderSelectedNote(null);
+        return;
+      }
+
+      if (!this.selectedNoteId || !notes.find(n => n.id === this.selectedNoteId)) {
+        this.selectedNoteId = notes[0].id;
+      }
+
+      listContainer.innerHTML = notes.map(note => {
+        const subject = store.getSubjectById(note.subjectId);
+        const isSelected = note.id === this.selectedNoteId;
+        const dateStr = new Date(note.updatedAt).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' });
+
+        return `
+          <div class="note-item-card ${isSelected ? 'active-note' : ''}" data-note-id="${note.id}" style="${isSelected ? `border-left: 4px solid ${subject ? subject.color : 'var(--primary)'}` : ''}">
+            <div class="note-item-title">${note.title}</div>
+            <div class="note-item-meta">
+              <span>${subject ? subject.icon : ''} ${subject ? subject.code : ''} &bull; ${note.topic}</span>
+              <span>${dateStr}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      listContainer.querySelectorAll('.note-item-card').forEach(card => {
+        card.addEventListener('click', () => {
+          this.selectedNoteId = card.dataset.noteId;
+          this.renderNotesExplorer();
+        });
+      });
+
+      const activeNote = store.getNoteById(this.selectedNoteId);
+      this.renderSelectedNote(activeNote);
+    }
+
+    renderSelectedNote(note) {
+      const titleEl = document.getElementById('noteViewerTitle');
+      const badgeEl = document.getElementById('noteSubjectBadge');
+      const tagsContainer = document.getElementById('noteViewerTags');
+      const contentEl = document.getElementById('noteRenderedContent');
+      const actionBtns = [
+        document.getElementById('printNoteBtn'),
+        document.getElementById('exportNoteMdBtn'),
+        document.getElementById('editCurrentNoteBtn'),
+        document.getElementById('deleteCurrentNoteBtn')
+      ];
+
+      if (!note) {
+        if (titleEl) titleEl.textContent = 'Selecciona o crea un apunte';
+        if (badgeEl) badgeEl.style.display = 'none';
+        if (tagsContainer) tagsContainer.innerHTML = '';
+        if (contentEl) contentEl.innerHTML = '<p class="text-muted">No hay ningún apunte seleccionado.</p>';
+        actionBtns.forEach(btn => { if (btn) btn.disabled = true; });
+        return;
+      }
+
+      actionBtns.forEach(btn => { if (btn) btn.disabled = false; });
+
+      const subject = store.getSubjectById(note.subjectId);
+
+      if (titleEl) titleEl.textContent = note.title;
+      if (badgeEl) {
+        badgeEl.style.display = 'inline-flex';
+        badgeEl.style.background = subject ? subject.color : '#3b82f6';
+        badgeEl.innerHTML = `${subject ? subject.icon : '📚'} ${subject ? subject.name : 'Asignatura'} &bull; ${note.topic}`;
+      }
+
+      if (tagsContainer) {
+        tagsContainer.innerHTML = (note.tags || []).map(tag => `<span class="note-tag">#${tag}</span>`).join('');
+      }
+
+      if (contentEl) {
+        contentEl.innerHTML = this.notesEditor.renderToHtml(note.content);
+      }
+    }
+
+    /* --- ASIGNATURAS --- */
+    renderSubjects() {
+      const grid = document.getElementById('subjectsGridContainer');
+      if (!grid) return;
+
+      const subjects = store.getSubjects();
+
+      if (subjects.length === 0) {
+        grid.innerHTML = `<p class="text-muted" style="padding: 24px; text-align: center; grid-column: 1 / -1;">No tienes ninguna asignatura registrada aún.</p>`;
+        return;
+      }
+
+      grid.innerHTML = subjects.map(s => {
+        const avg = store.getSubjectAverageGrade(s.id);
+        const tasksCount = store.getTasks().filter(t => t.subjectId === s.id && t.status !== 'completada').length;
+        const examsCount = store.getExams().filter(e => e.subjectId === s.id).length;
+
+        return `
+          <div class="subject-card" style="--subject-accent-color: ${s.color};">
+            <div>
+              <div class="subject-card-header">
+                <div class="subject-icon-box" style="border: 2px solid ${s.color};">
+                  ${s.icon}
+                </div>
+                <div class="subject-title-info">
+                  <h3>${s.name}</h3>
+                  <span class="subject-code-pill">${s.code} &bull; ${s.creditWeight}h semanales</span>
+                </div>
+              </div>
+
+              <div class="subject-meta-list">
+                <div class="subject-meta-item">
+                  <span>👤 Profesor/a:</span> <strong>${s.teacher || 'Sin especificar'}</strong>
+                </div>
+                <div class="subject-meta-item">
+                  <span>📍 Aula habitual:</span> <strong>${s.room || 'Aula general'}</strong>
+                </div>
+                <div class="subject-meta-item">
+                  <span>⏳ Tareas pendientes:</span> <strong>${tasksCount}</strong>
+                </div>
+                <div class="subject-meta-item">
+                  <span>📝 Exámenes registrados:</span> <strong>${examsCount}</strong>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <div class="exam-grade-box" style="margin-bottom: 12px;">
+                <span style="font-size: 0.85rem; color: var(--text-secondary);">Nota media actual:</span>
+                <span class="grade-display ${avg !== null ? (avg >= 8.5 ? 'grade-high' : avg >= 5 ? 'grade-pass' : 'grade-fail') : ''}">
+                  ${avg !== null ? avg.toFixed(2) : '<span style="font-size: 0.8rem; color: var(--text-muted);">Sin notas</span>'}
+                </span>
+              </div>
+
+              <div style="display: flex; justify-content: flex-end; gap: 8px;">
+                <button class="btn btn-secondary btn-sm edit-subject-btn" data-subject-id="${s.id}">✏️ Editar</button>
+                <button class="btn btn-danger btn-sm delete-subject-btn" data-subject-id="${s.id}">🗑️</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      grid.querySelectorAll('.edit-subject-btn').forEach(btn => {
+        btn.addEventListener('click', () => this.openSubjectModal(btn.dataset.subjectId));
+      });
+
+      grid.querySelectorAll('.delete-subject-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          if (confirm('¿Eliminar esta asignatura? Se eliminarán también sus clases en el horario, tareas, exámenes y notas asociadas.')) {
+            store.deleteSubject(btn.dataset.subjectId);
+            this.showToast('Asignatura eliminada', 'info');
+          }
+        });
+      });
+    }
+
+    /* --- CALCULADORA EBAU / PAU --- */
+    initPauCalculator() {
+      const inputs = [
+        'pauGrade1Bach', 'pauGrade2Bach',
+        'pauGradeLengua', 'pauGradeHistoria', 'pauGradeIdioma', 'pauGradeTroncal',
+        'pauGradeOpt1', 'pauWeightOpt1',
+        'pauGradeOpt2', 'pauWeightOpt2'
+      ];
+
+      inputs.forEach(id => {
+        document.getElementById(id)?.addEventListener('input', () => this.calculatePauScore());
+        document.getElementById(id)?.addEventListener('change', () => this.calculatePauScore());
+      });
+
+      this.calculatePauScore();
+    }
+
+    calculatePauScore() {
+      const g1 = parseFloat(document.getElementById('pauGrade1Bach')?.value) || 0;
+      const g2 = parseFloat(document.getElementById('pauGrade2Bach')?.value) || 0;
+      const nmb = (g1 + g2) / 2;
+      const nmb60 = nmb * 0.6;
+
+      const gLengua = parseFloat(document.getElementById('pauGradeLengua')?.value) || 0;
+      const gHistoria = parseFloat(document.getElementById('pauGradeHistoria')?.value) || 0;
+      const gIdioma = parseFloat(document.getElementById('pauGradeIdioma')?.value) || 0;
+      const gTroncal = parseFloat(document.getElementById('pauGradeTroncal')?.value) || 0;
+      const cfg = (gLengua + gHistoria + gIdioma + gTroncal) / 4;
+      const cfg40 = cfg * 0.4;
+
+      const acceso10 = nmb60 + cfg40;
+
+      const gOpt1 = parseFloat(document.getElementById('pauGradeOpt1')?.value) || 0;
+      const wOpt1 = parseFloat(document.getElementById('pauWeightOpt1')?.value) || 0.2;
+      const opt1Points = gOpt1 >= 5 ? gOpt1 * wOpt1 : 0;
+
+      const gOpt2 = parseFloat(document.getElementById('pauGradeOpt2')?.value) || 0;
+      const wOpt2 = parseFloat(document.getElementById('pauWeightOpt2')?.value) || 0.2;
+      const opt2Points = gOpt2 >= 5 ? gOpt2 * wOpt2 : 0;
+
+      const total14 = Math.min(14.0, acceso10 + opt1Points + opt2Points);
+
+      const totalEl = document.getElementById('pauTotalScore');
+      if (totalEl) totalEl.textContent = total14.toFixed(3);
+
+      const nmbEl = document.getElementById('pauNmbVal');
+      if (nmbEl) nmbEl.textContent = nmb.toFixed(3);
+      const nmb60El = document.getElementById('pauNmb60Val');
+      if (nmb60El) nmb60El.textContent = nmb60.toFixed(3);
+      const cfgEl = document.getElementById('pauCfgVal');
+      if (cfgEl) cfgEl.textContent = cfg.toFixed(3);
+      const cfg40El = document.getElementById('pauCfg40Val');
+      if (cfg40El) cfg40El.textContent = cfg40.toFixed(3);
+      const accesoEl = document.getElementById('pauAcceso10Val');
+      if (accesoEl) accesoEl.textContent = acceso10.toFixed(3);
+      const opt1El = document.getElementById('pauOpt1PointsVal');
+      if (opt1El) opt1El.textContent = `+ ${opt1Points.toFixed(3)}`;
+      const opt2El = document.getElementById('pauOpt2PointsVal');
+      if (opt2El) opt2El.textContent = `+ ${opt2Points.toFixed(3)}`;
+    }
+
+    /* --- MODALES Y FORMULARIOS --- */
+    initModals() {
+      document.querySelectorAll('[data-close-modal]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
+        });
+      });
+
+      document.querySelectorAll('.modal-overlay').forEach(overlay => {
+        overlay.addEventListener('click', (e) => {
+          if (e.target === overlay) overlay.classList.remove('active');
+        });
+      });
+
+      this.initTaskForm();
+      this.initExamForm();
+      this.initSubjectForm();
+      this.initSlotForm();
+      this.initNoteForm();
+    }
+
+    populateSubjectSelects() {
+      const subjects = store.getSubjects();
+      const selects = [
+        document.getElementById('tasksSubjectFilter'),
+        document.getElementById('examsSubjectFilter'),
+        document.getElementById('notesSubjectFilter'),
+        document.getElementById('taskSubjectSelect'),
+        document.getElementById('examSubjectSelect'),
+        document.getElementById('slotSubjectSelect'),
+        document.getElementById('noteSubjectSelect')
+      ];
+
+      selects.forEach(sel => {
+        if (!sel) return;
+        const currentValue = sel.value;
+        const isFilter = sel.id.includes('Filter');
+
+        let optionsHtml = isFilter ? '<option value="all">Todas las asignaturas</option>' : '<option value="" disabled selected>Selecciona una asignatura</option>';
+        optionsHtml += subjects.map(s => `<option value="${s.id}">${s.icon} ${s.name}</option>`).join('');
+
+        sel.innerHTML = optionsHtml;
+        if (currentValue) sel.value = currentValue;
+      });
+    }
+
+    // Modal Tarea
+    openTaskModal(taskId = null) {
+      this.populateSubjectSelects();
+      const modal = document.getElementById('modalTask');
+      const form = document.getElementById('taskForm');
+      form.reset();
+
+      const titleEl = document.getElementById('modalTaskTitle');
+      const idInput = document.getElementById('taskId');
+      this.editingSubtasks = [];
+
+      if (taskId) {
+        const task = store.getTaskById(taskId);
+        if (!task) return;
+        titleEl.textContent = 'Editar Tarea';
+        idInput.value = task.id;
+        document.getElementById('taskTitleInput').value = task.title;
+        document.getElementById('taskSubjectSelect').value = task.subjectId;
+        document.getElementById('taskDueDate').value = task.dueDate;
+        document.getElementById('taskDueTime').value = task.dueTime || '23:59';
+        document.getElementById('taskPrioritySelect').value = task.priority;
+        document.getElementById('taskStatusSelect').value = task.status;
+        document.getElementById('taskDescription').value = task.description || '';
+        this.editingSubtasks = task.subtasks ? JSON.parse(JSON.stringify(task.subtasks)) : [];
+      } else {
+        titleEl.textContent = 'Nueva Tarea';
+        idInput.value = '';
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        document.getElementById('taskDueDate').value = tomorrow.toISOString().split('T')[0];
+      }
+
+      this.renderSubtasksEditorList();
+      modal.classList.add('active');
+      document.getElementById('taskTitleInput').focus();
+    }
+
+    initTaskForm() {
+      const addSubtaskBtn = document.getElementById('addSubtaskBtn');
+      const subtaskInput = document.getElementById('newSubtaskInput');
+
+      const addSubtask = () => {
+        const text = subtaskInput.value.trim();
+        if (!text) return;
+        this.editingSubtasks.push({
+          id: 'st_' + Date.now().toString(36),
+          text,
+          completed: false
+        });
+        subtaskInput.value = '';
+        this.renderSubtasksEditorList();
+      };
+
+      addSubtaskBtn?.addEventListener('click', addSubtask);
+      subtaskInput?.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          addSubtask();
+        }
+      });
+
+      document.getElementById('taskForm')?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const id = document.getElementById('taskId').value;
+        const taskData = {
+          title: document.getElementById('taskTitleInput').value,
+          subjectId: document.getElementById('taskSubjectSelect').value,
+          dueDate: document.getElementById('taskDueDate').value,
+          dueTime: document.getElementById('taskDueTime').value,
+          priority: document.getElementById('taskPrioritySelect').value,
+          status: document.getElementById('taskStatusSelect').value,
+          description: document.getElementById('taskDescription').value,
+          subtasks: this.editingSubtasks
+        };
+
+        if (id) {
+          store.updateTask(id, taskData);
+          this.showToast('Tarea actualizada correctamente', 'success');
+        } else {
+          store.addTask(taskData);
+          this.showToast('Tarea creada con éxito', 'success');
+        }
+
+        document.getElementById('modalTask').classList.remove('active');
+      });
+    }
+
+    renderSubtasksEditorList() {
+      const list = document.getElementById('modalSubtasksList');
+      if (!list) return;
+
+      list.innerHTML = this.editingSubtasks.map((st, idx) => `
+        <div class="subtask-edit-row">
+          <input type="checkbox" ${st.completed ? 'checked' : ''} data-st-index="${idx}" style="accent-color: var(--success); cursor: pointer;">
+          <input type="text" value="${st.text}" data-st-index="${idx}" class="form-input" style="flex: 1; padding: 6px 10px; font-size: 0.85rem;">
+          <button type="button" class="icon-btn remove-st-btn" data-st-index="${idx}" style="color: var(--danger);">✕</button>
+        </div>
+      `).join('');
+
+      list.querySelectorAll('input[type="checkbox"]').forEach(box => {
+        box.addEventListener('change', () => {
+          const idx = Number(box.dataset.stIndex);
+          this.editingSubtasks[idx].completed = box.checked;
+        });
+      });
+
+      list.querySelectorAll('input[type="text"]').forEach(input => {
+        input.addEventListener('input', () => {
+          const idx = Number(input.dataset.stIndex);
+          this.editingSubtasks[idx].text = input.value;
+        });
+      });
+
+      list.querySelectorAll('.remove-st-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const idx = Number(btn.dataset.stIndex);
+          this.editingSubtasks.splice(idx, 1);
+          this.renderSubtasksEditorList();
+        });
+      });
+    }
+
+    // Modal Examen
+    openExamModal(examId = null) {
+      this.populateSubjectSelects();
+      const modal = document.getElementById('modalExam');
+      const form = document.getElementById('examForm');
+      form.reset();
+
+      const titleEl = document.getElementById('modalExamTitle');
+      const idInput = document.getElementById('examId');
+
+      if (examId) {
+        const exam = store.getExamById(examId);
+        if (!exam) return;
+        titleEl.textContent = 'Editar Examen / Calificación';
+        idInput.value = exam.id;
+        document.getElementById('examTitleInput').value = exam.title;
+        document.getElementById('examSubjectSelect').value = exam.subjectId;
+        document.getElementById('examDateInput').value = exam.date;
+        document.getElementById('examTimeInput').value = exam.time || '08:00';
+        document.getElementById('examWeightInput').value = exam.weight || 40;
+        document.getElementById('examTopicsInput').value = exam.topics || '';
+        document.getElementById('examGradeInput').value = exam.grade !== null ? exam.grade : '';
+        document.getElementById('examNotesInput').value = exam.notes || '';
+      } else {
+        titleEl.textContent = 'Nuevo Examen';
+        idInput.value = '';
+        const nextWeek = new Date();
+        nextWeek.setDate(nextWeek.getDate() + 7);
+        document.getElementById('examDateInput').value = nextWeek.toISOString().split('T')[0];
+      }
+
+      modal.classList.add('active');
+      document.getElementById('examTitleInput').focus();
+    }
+
+    initExamForm() {
+      document.getElementById('examForm')?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const id = document.getElementById('examId').value;
+        const gradeVal = document.getElementById('examGradeInput').value;
+
+        const examData = {
+          title: document.getElementById('examTitleInput').value,
+          subjectId: document.getElementById('examSubjectSelect').value,
+          date: document.getElementById('examDateInput').value,
+          time: document.getElementById('examTimeInput').value,
+          weight: Number(document.getElementById('examWeightInput').value),
+          topics: document.getElementById('examTopicsInput').value,
+          grade: gradeVal !== '' ? parseFloat(gradeVal) : null,
+          notes: document.getElementById('examNotesInput').value
+        };
+
+        if (id) {
+          store.updateExam(id, examData);
+          this.showToast('Examen actualizado con éxito', 'success');
+        } else {
+          store.addExam(examData);
+          this.showToast('Examen registrado en el calendario', 'success');
+        }
+
+        document.getElementById('modalExam').classList.remove('active');
+      });
+    }
+
+    // Modal Asignatura
+    initColorAndIconPickers() {
+      const colorPicker = document.getElementById('subjectColorPicker');
+      const iconPicker = document.getElementById('subjectIconPicker');
+      const colorInput = document.getElementById('subjectSelectedColor');
+      const iconInput = document.getElementById('subjectSelectedIcon');
+
+      if (colorPicker) {
+        colorPicker.innerHTML = SUBJECT_COLORS.map((c, i) => `
+          <div class="color-choice ${i === 0 ? 'selected' : ''}" data-color="${c}" style="background-color: ${c};"></div>
+        `).join('');
+
+        colorPicker.querySelectorAll('.color-choice').forEach(pill => {
+          pill.addEventListener('click', () => {
+            colorPicker.querySelectorAll('.color-choice').forEach(p => p.classList.remove('selected'));
+            pill.classList.add('selected');
+            colorInput.value = pill.dataset.color;
+          });
+        });
+      }
+
+      if (iconPicker) {
+        iconPicker.innerHTML = SUBJECT_ICONS.map((icon, i) => `
+          <div class="icon-choice ${i === 0 ? 'selected' : ''}" data-icon="${icon}">${icon}</div>
+        `).join('');
+
+        iconPicker.querySelectorAll('.icon-choice').forEach(pill => {
+          pill.addEventListener('click', () => {
+            iconPicker.querySelectorAll('.icon-choice').forEach(p => p.classList.remove('selected'));
+            pill.classList.add('selected');
+            iconInput.value = pill.dataset.icon;
+          });
+        });
+      }
+    }
+
+    openSubjectModal(subjectId = null) {
+      const modal = document.getElementById('modalSubject');
+      const form = document.getElementById('subjectForm');
+      form.reset();
+
+      const titleEl = document.getElementById('modalSubjectTitle');
+      const idInput = document.getElementById('subjectId');
+      const colorInput = document.getElementById('subjectSelectedColor');
+      const iconInput = document.getElementById('subjectSelectedIcon');
+
+      if (subjectId) {
+        const subject = store.getSubjectById(subjectId);
+        if (!subject) return;
+        titleEl.textContent = 'Editar Asignatura';
+        idInput.value = subject.id;
+        document.getElementById('subjectNameInput').value = subject.name;
+        document.getElementById('subjectCodeInput').value = subject.code;
+        document.getElementById('subjectTeacherInput').value = subject.teacher;
+        document.getElementById('subjectRoomInput').value = subject.room;
+        document.getElementById('subjectCreditsInput').value = subject.creditWeight || 4;
+
+        colorInput.value = subject.color;
+        iconInput.value = subject.icon;
+      } else {
+        titleEl.textContent = 'Nueva Asignatura';
+        idInput.value = '';
+        colorInput.value = SUBJECT_COLORS[0];
+        iconInput.value = SUBJECT_ICONS[0];
+      }
+
+      document.querySelectorAll('#subjectColorPicker .color-choice').forEach(pill => {
+        pill.classList.toggle('selected', pill.dataset.color === colorInput.value);
+      });
+      document.querySelectorAll('#subjectIconPicker .icon-choice').forEach(pill => {
+        pill.classList.toggle('selected', pill.dataset.icon === iconInput.value);
+      });
+
+      modal.classList.add('active');
+      document.getElementById('subjectNameInput').focus();
+    }
+
+    initSubjectForm() {
+      document.getElementById('subjectForm')?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const id = document.getElementById('subjectId').value;
+        const subjectData = {
+          name: document.getElementById('subjectNameInput').value,
+          code: document.getElementById('subjectCodeInput').value,
+          teacher: document.getElementById('subjectTeacherInput').value,
+          room: document.getElementById('subjectRoomInput').value,
+          creditWeight: document.getElementById('subjectCreditsInput').value,
+          color: document.getElementById('subjectSelectedColor').value || SUBJECT_COLORS[0],
+          icon: document.getElementById('subjectSelectedIcon').value || '📚'
+        };
+
+        if (id) {
+          store.updateSubject(id, subjectData);
+          this.showToast('Asignatura modificada', 'success');
+        } else {
+          store.addSubject(subjectData);
+          this.showToast('Asignatura creada', 'success');
+        }
+
+        this.populateSubjectSelects();
+        document.getElementById('modalSubject').classList.remove('active');
+      });
+    }
+
+    // Modal Franja de Horario
+    openSlotModal(slotId = null, defaults = null) {
+      this.populateSubjectSelects();
+      const modal = document.getElementById('modalSlot');
+      const form = document.getElementById('slotForm');
+      const deleteBtn = document.getElementById('deleteSlotBtn');
+      form.reset();
+
+      const titleEl = document.getElementById('modalSlotTitle');
+      const idInput = document.getElementById('slotId');
+
+      if (slotId) {
+        const slot = store.getSchedule().find(s => s.id === slotId);
+        if (!slot) return;
+        titleEl.textContent = 'Editar Franja Horaria';
+        idInput.value = slot.id;
+        document.getElementById('slotDaySelect').value = slot.day;
+        document.getElementById('slotSubjectSelect').value = slot.subjectId;
+        document.getElementById('slotStartTime').value = slot.startTime;
+        document.getElementById('slotEndTime').value = slot.endTime;
+        document.getElementById('slotRoomInput').value = slot.room || '';
+        if (deleteBtn) deleteBtn.style.display = 'inline-flex';
+      } else {
+        titleEl.textContent = 'Añadir Clase al Horario';
+        idInput.value = '';
+        if (deleteBtn) deleteBtn.style.display = 'none';
+        if (defaults) {
+          if (defaults.day) document.getElementById('slotDaySelect').value = defaults.day;
+          if (defaults.startTime) document.getElementById('slotStartTime').value = defaults.startTime;
+          if (defaults.endTime) document.getElementById('slotEndTime').value = defaults.endTime;
+        }
+      }
+
+      modal.classList.add('active');
+    }
+
+    initSlotForm() {
+      document.getElementById('slotForm')?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const id = document.getElementById('slotId').value;
+        const slotData = {
+          day: Number(document.getElementById('slotDaySelect').value),
+          subjectId: document.getElementById('slotSubjectSelect').value,
+          startTime: document.getElementById('slotStartTime').value,
+          endTime: document.getElementById('slotEndTime').value,
+          room: document.getElementById('slotRoomInput').value
+        };
+
+        if (id) {
+          store.updateScheduleSlot(id, slotData);
+          this.showToast('Clase actualizada en el horario', 'success');
+        } else {
+          store.addScheduleSlot(slotData);
+          this.showToast('Clase añadida al horario', 'success');
+        }
+
+        document.getElementById('modalSlot').classList.remove('active');
+      });
+
+      document.getElementById('deleteSlotBtn')?.addEventListener('click', () => {
+        const id = document.getElementById('slotId').value;
+        if (id && confirm('¿Eliminar esta clase del horario?')) {
+          store.deleteScheduleSlot(id);
+          this.showToast('Clase eliminada del horario', 'info');
+          document.getElementById('modalSlot').classList.remove('active');
+        }
+      });
+    }
+
+    // Modal Apunte
+    openNoteModal(noteId = null) {
+      this.populateSubjectSelects();
+      const modal = document.getElementById('modalNoteEditor');
+      const form = document.getElementById('noteForm');
+      form.reset();
+
+      const titleEl = document.getElementById('modalNoteFormTitle');
+      const idInput = document.getElementById('noteId');
+
+      if (noteId) {
+        const note = store.getNoteById(noteId);
+        if (!note) return;
+        titleEl.textContent = 'Editar Apunte';
+        idInput.value = note.id;
+        document.getElementById('noteSubjectSelect').value = note.subjectId;
+        document.getElementById('noteTopicInput').value = note.topic;
+        document.getElementById('noteTitleInput').value = note.title;
+        document.getElementById('noteTagsInput').value = (note.tags || []).join(', ');
+        document.getElementById('noteContentInput').value = note.content;
+      } else {
+        titleEl.textContent = 'Nuevo Apunte';
+        idInput.value = '';
+      }
+
+      modal.classList.add('active');
+      document.getElementById('noteTitleInput').focus();
+    }
+
+    initNoteForm() {
+      document.getElementById('noteForm')?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const id = document.getElementById('noteId').value;
+        const noteData = {
+          subjectId: document.getElementById('noteSubjectSelect').value,
+          topic: document.getElementById('noteTopicInput').value,
+          title: document.getElementById('noteTitleInput').value,
+          tags: document.getElementById('noteTagsInput').value,
+          content: document.getElementById('noteContentInput').value
+        };
+
+        if (id) {
+          store.updateNote(id, noteData);
+          this.selectedNoteId = id;
+          this.showToast('Apunte guardado', 'success');
+        } else {
+          const newNote = store.addNote(noteData);
+          this.selectedNoteId = newNote.id;
+          this.showToast('Nuevo apunte creado', 'success');
+        }
+
+        document.getElementById('modalNoteEditor').classList.remove('active');
+        this.switchView('notes');
+      });
+    }
+
+    // Modal Ajustes
+    initSettings() {
+      const modal = document.getElementById('modalSettings');
+
+      document.getElementById('openSettingsBtn')?.addEventListener('click', () => {
+        const settings = store.getSettings();
+        document.getElementById('settingsStudentName').value = settings.studentName || '';
+        document.getElementById('settingsCourse').value = settings.bachilleratoCourse || '2º Bachillerato';
+        document.getElementById('settingsModality').value = settings.modality || 'Ciencias y Tecnología';
+        modal.classList.add('active');
+      });
+
+      document.getElementById('saveSettingsBtn')?.addEventListener('click', () => {
+        const updated = {
+          studentName: document.getElementById('settingsStudentName').value.trim() || 'Estudiante',
+          bachilleratoCourse: document.getElementById('settingsCourse').value,
+          modality: document.getElementById('settingsModality').value
+        };
+        store.updateSettings(updated);
+        this.showToast('Ajustes guardados correctamente', 'success');
+        modal.classList.remove('active');
+      });
+
+      document.getElementById('exportBackupBtn')?.addEventListener('click', () => {
+        const json = store.exportJSON();
+        const blob = new Blob([json], { type: 'application/json' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `bachitrack_backup_${new Date().toISOString().split('T')[0]}.json`;
+        link.click();
+        URL.revokeObjectURL(link.href);
+        this.showToast('Copia de seguridad descargada', 'success');
+      });
+
+      document.getElementById('importBackupFileInput')?.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const result = store.importJSON(event.target.result);
+          if (result.success) {
+            this.showToast('Copia de seguridad restaurada con éxito', 'success');
+            modal.classList.remove('active');
+            this.refreshCurrentView();
+          } else {
+            this.showToast('Error al importar: ' + result.error, 'error');
+          }
+        };
+        reader.readAsText(file);
+      });
+
+      document.getElementById('resetDataBtn')?.addEventListener('click', () => {
+        if (confirm('⚠️ ¿Estás seguro de restablecer todos los datos a la configuración inicial de Bachillerato? Se perderán los datos que no hayas exportado.')) {
+          store.resetToDefaults();
+          this.showToast('Datos restablecidos a la configuración de ejemplo', 'info');
+          modal.classList.remove('active');
+          this.refreshCurrentView();
+        }
+      });
+    }
+
+    showToast(message, type = 'info') {
+      const container = document.getElementById('toastContainer');
+      if (!container) return;
+
+      const toast = document.createElement('div');
+      toast.className = `toast toast-${type}`;
+      const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️';
+      toast.innerHTML = `<span>${icon}</span> <span>${message}</span>`;
+
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(10px)';
+        toast.style.transition = 'all 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+      }, 3200);
+    }
+  }
+
+  /* ==========================================================================
+     INICIALIZACIÓN INMEDIATA Y ROBUSTA
+     ========================================================================== */
+
+  function startApp() {
+    if (!window.bachiTrackApp) {
+      window.bachiTrackApp = new App();
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', startApp);
+  } else {
+    startApp();
+  }
+
+})();
+
+</script>
+</body>
+</html>
