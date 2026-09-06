@@ -1748,10 +1748,122 @@ body {
   }
 }
 
+/* ==========================================================================
+   PANTALLA DE ACCESO Y BLOQUEO CON CONTRASEÑA
+   ========================================================================== */
+
+.auth-screen-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(11, 15, 25, 0.95);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  padding: 20px;
+}
+
+.auth-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 34px 28px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 20px 40px -5px rgba(0, 0, 0, 0.6), 0 0 50px rgba(59, 130, 246, 0.25);
+  animation: fadeIn 0.3s ease;
+}
+
+.auth-brand {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.auth-brand h2 {
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.auth-brand p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.auth-error-msg {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #ef4444;
+  font-size: 0.82rem;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  text-align: center;
+  font-weight: 600;
+}
+
+.auth-hint {
+  margin-top: 14px;
+  padding: 12px 14px;
+  background: var(--bg-card-muted);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  text-align: center;
+  line-height: 1.5;
+}
+
 </style>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
 </head>
 <body>
+  <!-- PANTALLA DE BLOQUEO Y AUTORIZACIÓN -->
+  <div class="auth-screen-overlay" id="authScreen" style="display: none;">
+    <div class="auth-card">
+      <div class="auth-brand">
+        <div class="brand-logo" style="width: 52px; height: 52px; font-size: 26px; margin: 0 auto 12px;">🎓</div>
+        <h2>BachiTrack</h2>
+        <p>Acceso Protegido de Bachillerato</p>
+      </div>
+      <form id="loginForm" class="auth-form">
+        <div class="form-group">
+          <label for="authUsername">Usuario</label>
+          <input type="text" id="authUsername" class="form-input" required placeholder="Tu usuario" autocomplete="username">
+        </div>
+        <div class="form-group">
+          <label for="authPassword">Contraseña</label>
+          <input type="password" id="authPassword" class="form-input" required placeholder="Tu contraseña" autocomplete="current-password">
+        </div>
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <label style="font-size: 0.82rem; display: flex; align-items: center; gap: 6px; cursor: pointer; color: var(--text-secondary);">
+            <input type="checkbox" id="authRememberMe" style="accent-color: var(--primary);"> Recordar en este dispositivo
+          </label>
+        </div>
+        <div id="authErrorMsg" class="auth-error-msg" style="display: none;"></div>
+        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px; margin-top: 6px; font-size: 0.95rem;">
+          🔓 Entrar a BachiTrack
+        </button>
+        <div class="auth-hint">
+          💡 <strong>Acceso inicial predeterminado:</strong><br>
+          Usuario: <code class="code-inline">estudiante</code> &bull; Contraseña: <code class="code-inline">bachillerato</code><br>
+          <span style="font-size: 0.72rem; color: var(--text-muted);">(Podrás cambiar tus datos en ⚙️ Ajustes en cualquier momento).</span>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <div class="app-container">
     <!-- BARRA LATERAL (SIDEBAR) -->
     <aside class="sidebar" id="appSidebar">
@@ -1815,6 +1927,7 @@ body {
         <button class="settings-btn" id="openSettingsBtn" title="Configuración y Copias de Seguridad">
           ⚙️ Ajustes
         </button>
+        <button class="settings-btn" id="lockAppBtn" title="Bloquear y salir" style="color: var(--danger);">🔒 Salir</button>
       </div>
     </aside>
 
@@ -2549,6 +2662,36 @@ body {
 
         <hr class="note-divider">
 
+        <h4 style="font-size: 0.95rem; font-weight: 700; display: flex; align-items: center; gap: 6px;">
+          🔒 Seguridad y Contraseña de Acceso
+        </h4>
+        <p style="font-size: 0.8rem; color: var(--text-secondary);">
+          Cambia tu usuario y contraseña para que solo tú puedas entrar a tus apuntes, notas y tareas.
+        </p>
+
+        <div class="form-group" style="margin-top: 10px;">
+          <label for="settingsChangeUser">Nombre de usuario</label>
+          <input type="text" id="settingsChangeUser" class="form-input" placeholder="Nuevo usuario">
+        </div>
+
+        <div class="pau-inputs-grid" style="margin-bottom: 0;">
+          <div class="form-group">
+            <label for="settingsChangePass">Nueva contraseña</label>
+            <input type="password" id="settingsChangePass" class="form-input" placeholder="Mínimo 4 caracteres">
+          </div>
+          <div class="form-group">
+            <label for="settingsChangePassConfirm">Confirmar contraseña</label>
+            <input type="password" id="settingsChangePassConfirm" class="form-input" placeholder="Repite la contraseña">
+          </div>
+        </div>
+
+        <button type="button" class="btn btn-secondary btn-sm" id="saveCredentialsBtn" style="align-self: flex-start; margin-top: 6px;">
+          🔐 Actualizar Contraseña
+        </button>
+
+
+        <hr class="note-divider">
+
         <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--danger);">Zona de Peligro</h4>
         <p style="font-size: 0.8rem; color: var(--text-secondary);">
           Reinicia la aplicación con los datos de ejemplo iniciales de Bachillerato.
@@ -2581,6 +2724,89 @@ body {
 
   const STORAGE_KEY = 'bachitrack_data_v1';
   const SETTINGS_KEY = 'bachitrack_settings_v1';
+  const AUTH_KEY = 'bachitrack_auth_v1';
+  const SESSION_KEY = 'bachitrack_session_active';
+  const REMEMBER_KEY = 'bachitrack_remember_auth';
+
+  // Función de hash criptográfico para proteger contraseñas
+  async function computeHash(text) {
+    try {
+      const msgUint8 = new TextEncoder().encode(text + '_bachi_salt_2026');
+      const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    } catch (e) {
+      let h = 0;
+      for (let i = 0; i < text.length; i++) {
+        h = ((h << 5) - h) + text.charCodeAt(i);
+        h |= 0;
+      }
+      return 'fb_' + h.toString(36);
+    }
+  }
+
+  class AuthManager {
+    constructor() {
+      this.init();
+    }
+
+    async init() {
+      if (!localStorage.getItem(AUTH_KEY)) {
+        const hash = await computeHash('bachillerato');
+        localStorage.setItem(AUTH_KEY, JSON.stringify({
+          username: 'estudiante',
+          passwordHash: hash,
+          hasCustomPassword: false
+        }));
+      }
+    }
+
+    getCredentials() {
+      try {
+        const stored = localStorage.getItem(AUTH_KEY);
+        return stored ? JSON.parse(stored) : { username: 'estudiante', passwordHash: '', hasCustomPassword: false };
+      } catch (e) {
+        return { username: 'estudiante', passwordHash: '', hasCustomPassword: false };
+      }
+    }
+
+    isAuthenticated() {
+      return sessionStorage.getItem(SESSION_KEY) === 'true' || localStorage.getItem(REMEMBER_KEY) === 'true';
+    }
+
+    async verify(username, password) {
+      const creds = this.getCredentials();
+      const inputHash = await computeHash(password);
+      return (username.trim().toLowerCase() === creds.username.toLowerCase()) && (inputHash === creds.passwordHash);
+    }
+
+    setSession(remember) {
+      sessionStorage.setItem(SESSION_KEY, 'true');
+      if (remember) {
+        localStorage.setItem(REMEMBER_KEY, 'true');
+      } else {
+        localStorage.removeItem(REMEMBER_KEY);
+      }
+    }
+
+    logout() {
+      sessionStorage.removeItem(SESSION_KEY);
+      localStorage.removeItem(REMEMBER_KEY);
+    }
+
+    async updateCredentials(newUsername, newPassword) {
+      const hash = await computeHash(newPassword);
+      const newCreds = {
+        username: newUsername.trim(),
+        passwordHash: hash,
+        hasCustomPassword: true
+      };
+      localStorage.setItem(AUTH_KEY, JSON.stringify(newCreds));
+      return newCreds;
+    }
+  }
+
+  const auth = new AuthManager();
 
   const SUBJECT_COLORS = [
     '#3b82f6', // Azul eléctrico
@@ -2827,7 +3053,7 @@ body {
       content: `## Teoremas Fundamentales en Bachillerato (Imprescindibles para EBAU)
 
 ### 1. Teorema de Bolzano
-> **[DEFINICION]** Si una función $f(x)$ es continua en un intervalo cerrado $[a, b]$ y toma valores de signos opuestos en los extremos ($f(a) \\cdot f(b) < 0$), entonces existe al menos un punto $c \\in (a, b)$ tal que $f(c) = 0$.
+> **[DEFINICION]** Si una función $f(x)$ es continua en un intervalo cerrado $[a, b]$ y toma valores de signos opuestos en los extremos ($f(a) \cdot f(b) < 0$), entonces existe al menos un punto $c \in (a, b)$ tal que $f(c) = 0$.
 
 - **Aplicación típica en examen**: Demostrar que una ecuación tiene al menos una solución real.
 - **Tip**: Despeja todo a un miembro para igualar a cero: $g(x) = f(x) - k = 0$.
@@ -2835,13 +3061,13 @@ body {
 ---
 
 ### 2. Teorema de Rolle
-> **[DEFINICION]** Si $f(x)$ es continua en $[a, b]$, derivable en $(a, b)$ y además $f(a) = f(b)$, existe al menos un punto $c \\in (a, b)$ tal que $f'(c) = 0$.
+> **[DEFINICION]** Si $f(x)$ es continua en $[a, b]$, derivable en $(a, b)$ y además $f(a) = f(b)$, existe al menos un punto $c \in (a, b)$ tal que $f'(c) = 0$.
 
 ---
 
 ### 3. Teorema del Valor Medio (Lagrange)
-> **[FORMULA]** Existe $c \\in (a, b)$ tal que:
-> $f'(c) = \\frac{f(b) - f(a)}{b - a}$
+> **[FORMULA]** Existe $c \in (a, b)$ tal que:
+> $f'(c) = \frac{f(b) - f(a)}{b - a}$
 
 - **Significado geométrico**: La pendiente de la recta secante que une $(a, f(a))$ y $(b, f(b))$ coincide con la pendiente de la recta tangente en algún punto intermedio $c$.
 
@@ -2860,21 +3086,21 @@ body {
 En una órbita circular, la única fuerza que actúa es la atracción gravitatoria, que ejerce el papel de fuerza centrípeta:
 
 > **[FORMULA]**
-> $F_g = F_c \\implies G \\frac{M \\cdot m}{r^2} = m \\frac{v^2}{r}$
+> $F_g = F_c \implies G \frac{M \cdot m}{r^2} = m \frac{v^2}{r}$
 
 Despejando la velocidad orbital:
 > **[FORMULA]**
-> $v_{orb} = \\sqrt{\\frac{G \\cdot M}{r}}$
+> $v_{orb} = \sqrt{\frac{G \cdot M}{r}}$
 > *Donde $r = R_T + h$ (radio del planeta más la altura de la órbita).*
 
 ---
 
 ### Periodo de revolución (3ª Ley de Kepler)
 > **[FORMULA]**
-> $T^2 = \\frac{4\\pi^2}{G \\cdot M} r^3$
+> $T^2 = \frac{4\pi^2}{G \cdot M} r^3$
 
 > **[EJEMPLO]** Satélites Geoestacionarios:
-> Su periodo es igual al de rotación de la Tierra ($T = 24\\text{ horas} = 86400\\text{ s}$). Se sitúan siempre sobre el ecuador a una altura de aproximadamente $36000\\text{ km}$.`
+> Su periodo es igual al de rotación de la Tierra ($T = 24\text{ horas} = 86400\text{ s}$). Se sitúan siempre sobre el ecuador a una altura de aproximadamente $36000\text{ km}$.`
     },
     {
       id: 'note_3',
@@ -3344,7 +3570,7 @@ Pérdida de las últimas colonias de ultramar (Cuba, Puerto Rico y Filipinas). P
           insertion = `\n> **[DEFINICION]** ${selectedText || 'Enuncia aquí el concepto, ley o definición exacta.'}\n`;
           break;
         case 'formula':
-          insertion = `\n> **[FORMULA]** ${selectedText || '$E = m \\cdot c^2$'}\n`;
+          insertion = `\n> **[FORMULA]** ${selectedText || '$E = m \cdot c^2$'}\n`;
           break;
         case 'alert':
           insertion = `\n> **[IMPORTANTE]** ${selectedText || 'Detalle clave que suelen preguntar en los exámenes o penalizar en corrección.'}\n`;
@@ -3460,8 +3686,80 @@ Pérdida de las últimas colonias de ultramar (Cuba, Puerto Rico y Filipinas). P
       this.initNotesEventListeners();
       this.initPauCalculator();
       this.initSettings();
+      this.initAuth();
 
       this.switchView('dashboard');
+    }
+
+    initAuth() {
+      const authScreen = document.getElementById('authScreen');
+      const loginForm = document.getElementById('loginForm');
+      const errorMsg = document.getElementById('authErrorMsg');
+      const lockBtn = document.getElementById('lockAppBtn');
+
+      if (auth.isAuthenticated()) {
+        if (authScreen) authScreen.style.display = 'none';
+      } else {
+        if (authScreen) {
+          authScreen.style.display = 'flex';
+          setTimeout(() => document.getElementById('authUsername')?.focus(), 150);
+        }
+      }
+
+      loginForm?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const user = document.getElementById('authUsername').value;
+        const pass = document.getElementById('authPassword').value;
+        const remember = document.getElementById('authRememberMe')?.checked;
+
+        const isValid = await auth.verify(user, pass);
+        if (isValid) {
+          auth.setSession(remember);
+          if (authScreen) authScreen.style.display = 'none';
+          if (errorMsg) errorMsg.style.display = 'none';
+          loginForm.reset();
+          this.showToast('¡Bienvenido de nuevo a BachiTrack! 🎓', 'success');
+        } else {
+          if (errorMsg) {
+            errorMsg.textContent = '❌ Usuario o contraseña incorrectos. Revisa mayúsculas/minúsculas.';
+            errorMsg.style.display = 'block';
+          }
+        }
+      });
+
+      lockBtn?.addEventListener('click', () => {
+        auth.logout();
+        if (authScreen) {
+          authScreen.style.display = 'flex';
+          setTimeout(() => document.getElementById('authUsername')?.focus(), 150);
+        }
+        this.showToast('Aplicación bloqueada 🔒', 'info');
+      });
+
+      // Guardar nueva contraseña desde la pantalla de Ajustes
+      document.getElementById('saveCredentialsBtn')?.addEventListener('click', async () => {
+        const newUser = document.getElementById('settingsChangeUser').value.trim();
+        const newPass = document.getElementById('settingsChangePass').value;
+        const confirmPass = document.getElementById('settingsChangePassConfirm').value;
+
+        if (!newUser) {
+          this.showToast('El usuario no puede estar vacío', 'error');
+          return;
+        }
+        if (!newPass || newPass.length < 4) {
+          this.showToast('La contraseña debe tener al menos 4 caracteres', 'error');
+          return;
+        }
+        if (newPass !== confirmPass) {
+          this.showToast('Las contraseñas no coinciden', 'error');
+          return;
+        }
+
+        await auth.updateCredentials(newUser, newPass);
+        this.showToast('¡Usuario y contraseña actualizados correctamente! 🔐', 'success');
+        document.getElementById('settingsChangePass').value = '';
+        document.getElementById('settingsChangePassConfirm').value = '';
+      });
 
       window.addEventListener('bachitrack-data-changed', () => {
         this.refreshCurrentView();
@@ -5031,6 +5329,9 @@ Pérdida de las últimas colonias de ultramar (Cuba, Puerto Rico y Filipinas). P
         document.getElementById('settingsStudentName').value = settings.studentName || '';
         document.getElementById('settingsCourse').value = settings.bachilleratoCourse || '2º Bachillerato';
         document.getElementById('settingsModality').value = settings.modality || 'Ciencias y Tecnología';
+        const creds = auth.getCredentials();
+        const changeUserEl = document.getElementById('settingsChangeUser');
+        if (changeUserEl) changeUserEl.value = creds.username || '';
         modal.classList.add('active');
       });
 
